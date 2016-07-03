@@ -11,13 +11,17 @@ canvas = require "./canvas"
 
 tiles0 = null
 
+S = 16
+
 update = ->
 
 draw = ->
   canvas.fill('rgb(89, 125, 206)')
 
   if tiles0
-    canvas.drawImage(tiles0, 0, 0)
+    [0...18].forEach (y) ->
+      [0...32].forEach (x) ->
+        canvas.drawImage(tiles0, 3 * S, 3 * S, S, S, x * S, y * S, S, S)
 
 step = ->
   update()
@@ -37,8 +41,6 @@ ajax.getBlob("https://danielx.whimsy.space/DawnLike/Objects/Wall.png?o_0")
     img.onload = ->
       resolve(img)
     img.onerror = reject
-    
     img.src = URL.createObjectURL(blob)
 .then (img) ->
-  console.log img
   tiles0 = img
