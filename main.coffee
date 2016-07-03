@@ -9,7 +9,8 @@
 require "./setup"
 canvas = require "./canvas"
 
-tiles0 = null
+tile0 = null
+tile1 = null
 
 S = 16
 
@@ -18,10 +19,13 @@ update = ->
 draw = ->
   canvas.fill('rgb(89, 125, 206)')
 
-  if tiles0
+  if tile0
+    #canvas.drawImage(tile0, 0, 0)
+    #return
+
     [0...18].forEach (y) ->
       [0...32].forEach (x) ->
-        canvas.drawImage(tiles0, 3 * S, 3 * S, S, S, x * S, y * S, S, S)
+        canvas.drawImage(tile0, 8 * S, 7 * S, S, S, x * S, y * S, S, S)
 
 step = ->
   update()
@@ -31,16 +35,13 @@ step = ->
 
 step()
 
-Ajax = require "ajax"
-ajax = Ajax()
+preload = require "./preload"
 
-ajax.getBlob("https://danielx.whimsy.space/DawnLike/Objects/Wall.png?o_0")
-.then (blob) ->
-  new Promise (resolve, reject) ->
-    img = new Image
-    img.onload = ->
-      resolve(img)
-    img.onerror = reject
-    img.src = URL.createObjectURL(blob)
-.then (img) ->
-  tiles0 = img
+Promise.all [
+  "Objects/Wall.png"
+  "Objects/Floor.png"
+  "Objects/Ground0.png"
+  "Objects/Ground1.png"
+].map preload
+.then ([wall, floor, ground0, ground1]) ->
+  tile0 = floor
