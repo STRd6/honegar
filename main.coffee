@@ -59,7 +59,7 @@ Promise.all [
     [5, 0, 0]
   ]
 
-  characters = [
-    [4, 0, 0]
-  ]
+  characters = [0...8].map (x) ->
+    [4, x, 0]
+
   renderer = Renderer(sheets, tiles, characters)

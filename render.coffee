@@ -88,4 +88,5 @@ module.exports = (sheets, tiles, characters) ->
       # Draw Objects
 
       # Draw Characters
-      drawCharacter canvas, 0, t, 16, 9
+      world.entities().forEach ([index, x, y]) ->
+        drawCharacter canvas, index, t, x, y
