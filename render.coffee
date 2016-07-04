@@ -12,7 +12,7 @@ module.exports = (sheets, tiles, characters) ->
     [2, 0]
     [-1, -1]
     [-1, 0]
-    [5, 0]
+    [5, 0] # 8
     [1, 1]
     [4, 0]
     [0, 1]
