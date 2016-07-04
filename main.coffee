@@ -9,23 +9,20 @@
 require "./setup"
 canvas = require "./canvas"
 
+World = require "./world"
+
 Renderer = require "./render"
 renderer = null
 
-# Sheet index, sheetX, sheetY
-tiles = [
-  [1, 8, 7]
-  [0, 3, 3]
-  [4, 0, 0]
-  [5, 0, 0]
-]
+view =
+  x: 12
+  y: 7
+  width: 32
+  height: 18
 
-characters = [
-  [4, 0, 0]
-]
-
-view = {}
-world = {}
+world = World
+  width: 512
+  height: 512
 
 update = ->
 
@@ -51,4 +48,15 @@ Promise.all [
   "Characters/Player1"
 ].map Preload.image
 .then (sheets) ->
+  # Sheet index, sheetX, sheetY
+  tiles = [
+    [1, 8, 7]
+    [0, 3, 3]
+    [4, 0, 0]
+    [5, 0, 0]
+  ]
+
+  characters = [
+    [4, 0, 0]
+  ]
   renderer = Renderer(sheets, tiles, characters)

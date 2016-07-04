@@ -1,3 +1,5 @@
+Matrix = require "matrix"
+
 module.exports = (sheets, tiles, characters) ->
   S = 16 # Tile size
 
@@ -30,18 +32,16 @@ module.exports = (sheets, tiles, characters) ->
   draw: (canvas, world, view) ->
     t = +new Date
     canvas.fill('rgb(89, 125, 206)')
-  
-    #canvas.drawImage(sheets[0], 0, 0)
-    #return
 
-    # Draw Tiles
-    [0...18].forEach (y) ->
-      [0...32].forEach (x) ->
-        drawTile(canvas, 0, x, y)
+    transform = Matrix.translate(-S * view.x, -S * view.y)
+
+    canvas.withTransform transform, (canvas) ->
+      # Draw Tiles
+      world.region view, (value, x, y) ->
+        drawTile(canvas, value, x, y)
         return
-      return
 
-    # Draw Objects
+      # Draw Objects
 
-    # Draw Characters
-    drawCharacter canvas, 0, t, 16, 9
+      # Draw Characters
+      drawCharacter canvas, 0, t, 16, 9

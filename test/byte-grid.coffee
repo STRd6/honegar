@@ -26,7 +26,7 @@ describe "Byte Grid", ->
       x: 3
       y: 2
       width: 3
-      height: 3
+      height: 2
 
     grid.region rect, (value, x, y) ->
       console.log x, y, value

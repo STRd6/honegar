@@ -11,12 +11,14 @@ module.exports = ({width, height, data}) ->
       y = 0
       while y < rect.height
         x = 0
-        while x < rect.height
+        while x < rect.width
           xPosition = x + xStart
           yPosition = y + yStart
           iterator self.get(xPosition, yPosition), xPosition, yPosition
           x += 1
         y += 1
+
+      return self
 
     get: (x, y) ->
       if 0 <= x < width and 0 <= y < height
