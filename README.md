@@ -14,9 +14,17 @@ Birth and death
 
 Lineage and family trees
 
+Cultural evolution
+
+History and legends
+
 Procedurally generated songs and music that you can hear, rendered in MIDI.
 
 Natural and synthetic drugs, hallucinogens, alcohol.
+
+Drunk Driving
+
+Procedurally generated books
 
 Basic perceptual modelling of autonamous agents.
 
