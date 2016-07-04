@@ -50,7 +50,10 @@ Promise.all [
 .then (sheets) ->
   # Sheet index, sheetX, sheetY
   tiles = [
-    [1, 8, 7]
+    [1, 1, 19]
+    [1, 8, 7, true]
+    [1, 15, 7, true]
+    [1, 15, 19, true]
     [0, 3, 3]
     [4, 0, 0]
     [5, 0, 0]

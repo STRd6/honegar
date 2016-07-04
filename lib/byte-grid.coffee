@@ -23,8 +23,6 @@ module.exports = ({width, height, data}) ->
     get: (x, y) ->
       if 0 <= x < width and 0 <= y < height
         data[y * width + x]
-      else
-        throw new Error "index out of bounds"
 
     set: (x, y, value) ->
       if 0 <= x < width and 0 <= y < height

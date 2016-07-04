@@ -3,6 +3,45 @@ Matrix = require "matrix"
 module.exports = (sheets, tiles, characters) ->
   S = 16 # Tile size
 
+  autoTileDelta = [
+    [4, -1]
+    [2, 1]
+    [3, 0]
+    [-1, 1]
+    [2, -1]
+    [2, 0]
+    [-1, -1]
+    [-1, 0]
+    [5, 0]
+    [1, 1]
+    [4, 0]
+    [0, 1]
+    [1, -1]
+    [1, 0]
+    [0, -1]
+    [0, 0]
+  ]
+
+  adjacents = [
+    [0, -1]
+    [1, 0]
+    [0, 1]
+    [-1, 0]
+  ]
+  # Compute an auto-tile n-value 0-15
+  # Count up top, right, bottom, left, tiles that are the same
+  # Assume off-grid tiles are the same
+  autoTileValue = (world, tile, x, y) ->
+    mult = 1
+
+    adjacents.map ([dx, dy]) ->
+      (world.getTile(x + dx, y + dy) ? tile) is tile
+    .reduce (total, match) ->
+      total = total + match * mult
+      mult *= 2
+      total
+    , 0
+
   drawSprite = (canvas, sheet, sx, sy, x, y) ->
     canvas.drawImage(sheet,
       sx * S, sy * S, S, S, # Source 
@@ -21,9 +60,14 @@ module.exports = (sheets, tiles, characters) ->
 
     return
 
-  drawTile = (canvas, index, x, y) ->
-    [sheetIndex, tx, ty] = tiles[index]
+  drawTile = (canvas, world, index, x, y) ->
+    [sheetIndex, tx, ty, autoTile] = tiles[index]
     sheet = sheets[sheetIndex]
+
+    if autoTile
+      [dtx, dty] = autoTileDelta[autoTileValue(world, index, x, y)]
+      tx += dtx
+      ty += dty
 
     drawSprite(canvas, sheet, tx, ty, x, y)
 
@@ -38,7 +82,7 @@ module.exports = (sheets, tiles, characters) ->
     canvas.withTransform transform, (canvas) ->
       # Draw Tiles
       world.region view, (value, x, y) ->
-        drawTile(canvas, value, x, y)
+        drawTile(canvas, world, value, x, y)
         return
 
       # Draw Objects
