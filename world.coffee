@@ -11,7 +11,7 @@ module.exports = (I) ->
     height: height
 
   [0...128].forEach (y) ->
-    [0...128].forEach (x) -> 
+    [0...128].forEach (x) ->
       grid.set(x, y, rand(2))
 
   entities = [0...8].map (x) ->
@@ -20,6 +20,6 @@ module.exports = (I) ->
   self =
     getTile: grid.get
     region: grid.region
-      
+
     entities: ->
       entities

@@ -7,7 +7,7 @@
 # Watch as they scamper around
 
 require "./setup"
-canvas = require "./canvas"
+#require("./input")()
 
 World = require "./world"
 
@@ -15,14 +15,18 @@ Renderer = require "./render"
 renderer = null
 
 view =
-  x: 12
-  y: 7
+  x: 0
+  y: 0
   width: 32
   height: 18
+global.view = view
 
 world = World
   width: 512
   height: 512
+
+canvas = require("./canvas")(view)
+document.body.appendChild canvas.element()
 
 update = ->
 

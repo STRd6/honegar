@@ -3,7 +3,7 @@ ajax = Ajax()
 
 basePath = "https://danielx.whimsy.space/DawnLike/"
 
-module.exports = 
+module.exports =
   image: (name) ->
     ajax.getBlob("#{basePath}#{name}.png?o_0")
     .then (blob) ->

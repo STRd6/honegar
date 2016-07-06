@@ -44,7 +44,7 @@ module.exports = (sheets, tiles, characters) ->
 
   drawSprite = (canvas, sheet, sx, sy, x, y) ->
     canvas.drawImage(sheet,
-      sx * S, sy * S, S, S, # Source 
+      sx * S, sy * S, S, S, # Source
       x * S, y * S, S, S # Destination
     )
 
@@ -61,6 +61,8 @@ module.exports = (sheets, tiles, characters) ->
     return
 
   drawTile = (canvas, world, index, x, y) ->
+    return unless index?
+
     [sheetIndex, tx, ty, autoTile] = tiles[index]
     sheet = sheets[sheetIndex]
 
@@ -77,11 +79,17 @@ module.exports = (sheets, tiles, characters) ->
     t = +new Date
     canvas.fill('rgb(89, 125, 206)')
 
-    transform = Matrix.translate(-S * view.x, -S * view.y)
+    transform = Matrix.translate((-S * view.x)|0, (-S * view.y)|0)
+    
+    renderView =
+      x: Math.floor view.x
+      y: Math.floor view.y
+      width: view.width + 1
+      height: view.height + 1
 
     canvas.withTransform transform, (canvas) ->
       # Draw Tiles
-      world.region view, (value, x, y) ->
+      world.region renderView, (value, x, y) ->
         drawTile(canvas, world, value, x, y)
         return
 
