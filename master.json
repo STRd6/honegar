@@ -12,101 +12,82 @@
       "mode": "100644",
       "type": "blob"
     },
-    "main.coffee": {
-      "path": "main.coffee",
-      "content": "# This is what passes for the game at any point in time. I expect to have\n# a lot of experiments going in other files to mess around with systems!\n\n# TODO\n# Render a byte array as a tile map\n# Designate jobs for your dwarfs\n# Watch as they scamper around\n\nrequire \"./setup\"\ncanvas = require \"./canvas\"\n\nWorld = require \"./world\"\n\nRenderer = require \"./render\"\nrenderer = null\n\nview =\n  x: 12\n  y: 7\n  width: 32\n  height: 18\n\nworld = World\n  width: 512\n  height: 512\n\nupdate = ->\n\ndraw = ->\n  renderer?.draw(canvas, world, view)\n\nstep = ->\n  update()\n  draw()\n\n  requestAnimationFrame step\n\nstep()\n\nPreload = require \"./preload\"\n\nPromise.all [\n  \"Objects/Wall\"\n  \"Objects/Floor\"\n  \"Objects/Ground0\"\n  \"Objects/Ground1\"\n  \"Characters/Player0\"\n  \"Characters/Player1\"\n].map Preload.image\n.then (sheets) ->\n  # Sheet index, sheetX, sheetY\n  tiles = [\n    [1, 1, 19]\n    [1, 8, 7, true]\n    [1, 15, 7, true]\n    [1, 15, 19, true]\n    [0, 3, 3]\n    [4, 0, 0]\n    [5, 0, 0]\n  ]\n\n  characters = [0...8].map (x) ->\n    [4, x, 0]\n\n  renderer = Renderer(sheets, tiles, characters)\n",
-      "mode": "100644"
-    },
-    "render.coffee": {
-      "path": "render.coffee",
-      "content": "Matrix = require \"matrix\"\n\nmodule.exports = (sheets, tiles, characters) ->\n  S = 16 # Tile size\n\n  autoTileDelta = [\n    [4, -1]\n    [2, 1]\n    [3, 0]\n    [-1, 1]\n    [2, -1]\n    [2, 0]\n    [-1, -1]\n    [-1, 0]\n    [5, 0] # 8\n    [1, 1]\n    [4, 0]\n    [0, 1]\n    [1, -1]\n    [1, 0]\n    [0, -1]\n    [0, 0]\n  ]\n\n  adjacents = [\n    [0, -1]\n    [1, 0]\n    [0, 1]\n    [-1, 0]\n  ]\n  # Compute an auto-tile n-value 0-15\n  # Count up top, right, bottom, left, tiles that are the same\n  # Assume off-grid tiles are the same\n  autoTileValue = (world, tile, x, y) ->\n    mult = 1\n\n    adjacents.map ([dx, dy]) ->\n      (world.getTile(x + dx, y + dy) ? tile) is tile\n    .reduce (total, match) ->\n      total = total + match * mult\n      mult *= 2\n      total\n    , 0\n\n  drawSprite = (canvas, sheet, sx, sy, x, y) ->\n    canvas.drawImage(sheet,\n      sx * S, sy * S, S, S, # Source \n      x * S, y * S, S, S # Destination\n    )\n\n  drawCharacter = (canvas, index, t, x, y) ->\n    [sheetIndex, tx, ty] = characters[index]\n\n    if t % 1000 < 500\n      sheetIndex += 1\n\n    sheet = sheets[sheetIndex]\n\n    drawSprite(canvas, sheet, tx, ty, x, y)\n\n    return\n\n  drawTile = (canvas, world, index, x, y) ->\n    [sheetIndex, tx, ty, autoTile] = tiles[index]\n    sheet = sheets[sheetIndex]\n\n    if autoTile\n      [dtx, dty] = autoTileDelta[autoTileValue(world, index, x, y)]\n      tx += dtx\n      ty += dty\n\n    drawSprite(canvas, sheet, tx, ty, x, y)\n\n    return\n\n  draw: (canvas, world, view) ->\n    t = +new Date\n    canvas.fill('rgb(89, 125, 206)')\n\n    transform = Matrix.translate(-S * view.x, -S * view.y)\n\n    canvas.withTransform transform, (canvas) ->\n      # Draw Tiles\n      world.region view, (value, x, y) ->\n        drawTile(canvas, world, value, x, y)\n        return\n\n      # Draw Objects\n\n      # Draw Characters\n      world.entities().forEach ([index, x, y]) ->\n        drawCharacter canvas, index, t, x, y\n",
-      "mode": "100644"
-    },
     "canvas.coffee": {
       "path": "canvas.coffee",
-      "content": "TouchCanvas = require \"touch-canvas\"\n\ncanvas = TouchCanvas\n  width: 512\n  height: 288\n\ndocument.body.appendChild canvas.element()\n\nmodule.exports = canvas\n",
-      "mode": "100644"
-    },
-    "pixie.cson": {
-      "path": "pixie.cson",
-      "content": "width: 1536\nheight: 864\ndependencies:\n  ajax: \"distri/ajax:master\"\n  matrix: \"distri/matrix:master\"\n  \"touch-canvas\": \"distri/touch-canvas:v0.3.1\"\n",
-      "mode": "100644"
-    },
-    "style.styl": {
-      "path": "style.styl",
-      "content": "*\n  box-sizing: border-box\n\nhtml\n  height: 100%\n\nbody\n  background-color: rgb(20,12,28)\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif\n  font-weight: 300\n  font-size: 18px\n  height: 100%\n  margin: 0\n  overflow: hidden\n  user-select: none\n\ncanvas\n  bottom: 0\n  position: absolute\n  top: 0\n  left: 0\n  right: 0\n  margin: auto\n  width: 1536px\n  height: 864px\n  image-rendering: -moz-crisp-edges\n  image-rendering: -o-crisp-edges\n  image-rendering: -webkit-optimize-contrast\n  image-rendering: pixelated\n  -ms-interpolation-mode: nearest-neighbor\n",
-      "mode": "100644"
-    },
-    "setup.coffee": {
-      "path": "setup.coffee",
-      "content": "styleNode = document.createElement(\"style\")\nstyleNode.innerHTML = require \"./style\"\n\ndocument.head.appendChild(styleNode)\n",
-      "mode": "100644"
-    },
-    "preload.coffee": {
-      "path": "preload.coffee",
-      "content": "Ajax = require \"ajax\"\najax = Ajax()\n\nbasePath = \"https://danielx.whimsy.space/DawnLike/\"\n\nmodule.exports = \n  image: (name) ->\n    ajax.getBlob(\"#{basePath}#{name}.png?o_0\")\n    .then (blob) ->\n      new Promise (resolve, reject) ->\n        img = new Image\n        img.onload = ->\n          resolve(img)\n        img.onerror = reject\n        img.src = URL.createObjectURL(blob)\n",
-      "mode": "100644"
-    },
-    "world.coffee": {
-      "path": "world.coffee",
-      "content": "ByteGrid = require \"./lib/byte-grid\"\n\nrand = (n) ->\n  Math.floor(Math.random() * n)\n\nmodule.exports = (I) ->\n  {width, height} = I\n\n  grid = ByteGrid\n    width: width\n    height: height\n\n  [0...128].forEach (y) ->\n    [0...128].forEach (x) -> \n      grid.set(x, y, rand(2))\n\n  entities = [0...8].map (x) ->\n    [x, 16 + x % 5, 13 + x % 3]\n\n  self =\n    getTile: grid.get\n    region: grid.region\n      \n    entities: ->\n      entities\n",
-      "mode": "100644"
+      "content": "TouchCanvas = require \"touch-canvas\"\n\nmodule.exports = (viewport) ->\n  canvas = TouchCanvas\n    width: 512\n    height: 288\n\n  startPos = null\n  initialPan = null\n  canvas.on \"touch\", (e) ->\n    startPos = e\n    initialPan =\n      x: viewport.x\n      y: viewport.y\n\n  canvas.on \"move\", ({x, y}) ->\n    if startPos\n      {x:sX, y:sY} = startPos\n      deltaX = (sX - x) * viewport.width\n      deltaY = (sY - y) * viewport.height\n\n      viewport.x = initialPan.x + deltaX\n      viewport.y = initialPan.y + deltaY\n  \n  canvas.on \"release\", (e) ->\n    console.log e, viewport\n    startPos = null\n\n  return canvas\n",
+      "mode": "100644",
+      "type": "blob"
     },
     "lib/byte-grid.coffee": {
       "path": "lib/byte-grid.coffee",
       "content": "module.exports = ({width, height, data}) ->\n  length = width * height\n\n  data ?= new Uint8Array(length)\n\n  self =\n    region: (rect, iterator) ->\n      xStart = rect.x\n      yStart = rect.y\n\n      y = 0\n      while y < rect.height\n        x = 0\n        while x < rect.width\n          xPosition = x + xStart\n          yPosition = y + yStart\n          iterator self.get(xPosition, yPosition), xPosition, yPosition\n          x += 1\n        y += 1\n\n      return self\n\n    get: (x, y) ->\n      if 0 <= x < width and 0 <= y < height\n        data[y * width + x]\n\n    set: (x, y, value) ->\n      if 0 <= x < width and 0 <= y < height\n        data[y * width + x] = value\n      else\n        throw new Error \"index out of bounds\"\n\n    data: data\n",
-      "mode": "100644"
-    },
-    "test/byte-grid.coffee": {
-      "path": "test/byte-grid.coffee",
-      "content": "ByteGrid = require \"../lib/byte-grid\"\n\ndescribe \"Byte Grid\", ->\n  it \"should be a grid of bytes\", ->\n    grid = ByteGrid\n      width: 10\n      height: 10\n\n    [0...10].forEach (y) ->\n      [0...10].forEach (x) ->\n        grid.set(x, y, x + 10 * y)\n\n    assert.equal grid.get(5, 5), 55\n    assert.equal grid.get(7, 1), 17\n\n  it \"should iterate a region\", ->\n    grid = ByteGrid\n      width: 10\n      height: 10\n\n    [0...10].forEach (y) ->\n      [0...10].forEach (x) ->\n        grid.set(x, y, x + 10 * y)\n\n    rect =\n      x: 3\n      y: 2\n      width: 3\n      height: 2\n\n    grid.region rect, (value, x, y) ->\n      console.log x, y, value\n",
-      "mode": "100644"
+      "mode": "100644",
+      "type": "blob"
     },
     "lib/extensions.coffee": {
       "path": "lib/extensions.coffee",
       "content": "CanvasRenderingContext2D::withTransform ?= (matrix, block) ->\n  @save()\n\n  @transform(\n    matrix.a,\n    matrix.b,\n    matrix.c,\n    matrix.d,\n    matrix.tx,\n    matrix.ty\n  )\n\n  try\n    block(this)\n  finally\n    @restore()\n\n  return this\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "main.coffee": {
+      "path": "main.coffee",
+      "content": "# This is what passes for the game at any point in time. I expect to have\n# a lot of experiments going in other files to mess around with systems!\n\n# TODO\n# Render a byte array as a tile map\n# Designate jobs for your dwarfs\n# Watch as they scamper around\n\nrequire \"./setup\"\n#require(\"./input\")()\n\nWorld = require \"./world\"\n\nRenderer = require \"./render\"\nrenderer = null\n\nview =\n  x: 0\n  y: 0\n  width: 32\n  height: 18\nglobal.view = view\n\nworld = World\n  width: 512\n  height: 512\n\ncanvas = require(\"./canvas\")(view)\ndocument.body.appendChild canvas.element()\n\nupdate = ->\n\ndraw = ->\n  renderer?.draw(canvas, world, view)\n\nstep = ->\n  update()\n  draw()\n\n  requestAnimationFrame step\n\nstep()\n\nPreload = require \"./preload\"\n\nPromise.all [\n  \"Objects/Wall\"\n  \"Objects/Floor\"\n  \"Objects/Ground0\"\n  \"Objects/Ground1\"\n  \"Characters/Player0\"\n  \"Characters/Player1\"\n].map Preload.image\n.then (sheets) ->\n  # Sheet index, sheetX, sheetY\n  tiles = [\n    [1, 1, 19]\n    [1, 8, 7, true]\n    [1, 15, 7, true]\n    [1, 15, 19, true]\n    [0, 3, 3]\n    [4, 0, 0]\n    [5, 0, 0]\n  ]\n\n  characters = [0...8].map (x) ->\n    [4, x, 0]\n\n  renderer = Renderer(sheets, tiles, characters)\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "pixie.cson": {
+      "path": "pixie.cson",
+      "content": "width: 1536\nheight: 864\ndependencies:\n  ajax: \"distri/ajax:master\"\n  matrix: \"distri/matrix:master\"\n  \"touch-canvas\": \"distri/touch-canvas:v0.3.1\"\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "preload.coffee": {
+      "path": "preload.coffee",
+      "content": "Ajax = require \"ajax\"\najax = Ajax()\n\nbasePath = \"https://danielx.whimsy.space/DawnLike/\"\n\nmodule.exports =\n  image: (name) ->\n    ajax.getBlob(\"#{basePath}#{name}.png?o_0\")\n    .then (blob) ->\n      new Promise (resolve, reject) ->\n        img = new Image\n        img.onload = ->\n          resolve(img)\n        img.onerror = reject\n        img.src = URL.createObjectURL(blob)\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "render.coffee": {
+      "path": "render.coffee",
+      "content": "Matrix = require \"matrix\"\n\nmodule.exports = (sheets, tiles, characters) ->\n  S = 16 # Tile size\n\n  autoTileDelta = [\n    [4, -1]\n    [2, 1]\n    [3, 0]\n    [-1, 1]\n    [2, -1]\n    [2, 0]\n    [-1, -1]\n    [-1, 0]\n    [5, 0] # 8\n    [1, 1]\n    [4, 0]\n    [0, 1]\n    [1, -1]\n    [1, 0]\n    [0, -1]\n    [0, 0]\n  ]\n\n  adjacents = [\n    [0, -1]\n    [1, 0]\n    [0, 1]\n    [-1, 0]\n  ]\n  # Compute an auto-tile n-value 0-15\n  # Count up top, right, bottom, left, tiles that are the same\n  # Assume off-grid tiles are the same\n  autoTileValue = (world, tile, x, y) ->\n    mult = 1\n\n    adjacents.map ([dx, dy]) ->\n      (world.getTile(x + dx, y + dy) ? tile) is tile\n    .reduce (total, match) ->\n      total = total + match * mult\n      mult *= 2\n      total\n    , 0\n\n  drawSprite = (canvas, sheet, sx, sy, x, y) ->\n    canvas.drawImage(sheet,\n      sx * S, sy * S, S, S, # Source\n      x * S, y * S, S, S # Destination\n    )\n\n  drawCharacter = (canvas, index, t, x, y) ->\n    [sheetIndex, tx, ty] = characters[index]\n\n    if t % 1000 < 500\n      sheetIndex += 1\n\n    sheet = sheets[sheetIndex]\n\n    drawSprite(canvas, sheet, tx, ty, x, y)\n\n    return\n\n  drawTile = (canvas, world, index, x, y) ->\n    return unless index?\n\n    [sheetIndex, tx, ty, autoTile] = tiles[index]\n    sheet = sheets[sheetIndex]\n\n    if autoTile\n      [dtx, dty] = autoTileDelta[autoTileValue(world, index, x, y)]\n      tx += dtx\n      ty += dty\n\n    drawSprite(canvas, sheet, tx, ty, x, y)\n\n    return\n\n  draw: (canvas, world, view) ->\n    t = +new Date\n    canvas.fill('rgb(89, 125, 206)')\n\n    transform = Matrix.translate((-S * view.x)|0, (-S * view.y)|0)\n    \n    renderView =\n      x: Math.floor view.x\n      y: Math.floor view.y\n      width: view.width + 1\n      height: view.height + 1\n\n    canvas.withTransform transform, (canvas) ->\n      # Draw Tiles\n      world.region renderView, (value, x, y) ->\n        drawTile(canvas, world, value, x, y)\n        return\n\n      # Draw Objects\n\n      # Draw Characters\n      world.entities().forEach ([index, x, y]) ->\n        drawCharacter canvas, index, t, x, y\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "setup.coffee": {
+      "path": "setup.coffee",
+      "content": "styleNode = document.createElement(\"style\")\nstyleNode.innerHTML = require \"./style\"\n\ndocument.head.appendChild(styleNode)\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "style.styl": {
+      "path": "style.styl",
+      "content": "*\n  box-sizing: border-box\n\nhtml\n  height: 100%\n\nbody\n  background-color: rgb(20,12,28)\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif\n  font-weight: 300\n  font-size: 18px\n  height: 100%\n  margin: 0\n  overflow: hidden\n  user-select: none\n\ncanvas\n  bottom: 0\n  position: absolute\n  top: 0\n  left: 0\n  right: 0\n  margin: auto\n  width: 1536px\n  height: 864px\n  image-rendering: -moz-crisp-edges\n  image-rendering: -o-crisp-edges\n  image-rendering: -webkit-optimize-contrast\n  image-rendering: pixelated\n  -ms-interpolation-mode: nearest-neighbor\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "test/byte-grid.coffee": {
+      "path": "test/byte-grid.coffee",
+      "content": "ByteGrid = require \"../lib/byte-grid\"\n\ndescribe \"Byte Grid\", ->\n  it \"should be a grid of bytes\", ->\n    grid = ByteGrid\n      width: 10\n      height: 10\n\n    [0...10].forEach (y) ->\n      [0...10].forEach (x) ->\n        grid.set(x, y, x + 10 * y)\n\n    assert.equal grid.get(5, 5), 55\n    assert.equal grid.get(7, 1), 17\n\n  it \"should iterate a region\", ->\n    grid = ByteGrid\n      width: 10\n      height: 10\n\n    [0...10].forEach (y) ->\n      [0...10].forEach (x) ->\n        grid.set(x, y, x + 10 * y)\n\n    rect =\n      x: 3\n      y: 2\n      width: 3\n      height: 2\n\n    grid.region rect, (value, x, y) ->\n      console.log x, y, value\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "world.coffee": {
+      "path": "world.coffee",
+      "content": "ByteGrid = require \"./lib/byte-grid\"\n\nrand = (n) ->\n  Math.floor(Math.random() * n)\n\nmodule.exports = (I) ->\n  {width, height} = I\n\n  grid = ByteGrid\n    width: width\n    height: height\n\n  [0...128].forEach (y) ->\n    [0...128].forEach (x) ->\n      grid.set(x, y, rand(2))\n\n  entities = [0...8].map (x) ->\n    [x, 16 + x % 5, 13 + x % 3]\n\n  self =\n    getTile: grid.get\n    region: grid.region\n\n    entities: ->\n      entities\n",
+      "mode": "100644",
+      "type": "blob"
+    },
+    "input.coffee": {
+      "path": "input.coffee",
+      "content": "module.exports = ->\n  active = false\n  \n  document.addEventListener \"mousedown\", (e) ->\n    console.log e\n    active = true\n\n  document.addEventListener \"mousemove\", (e) ->\n    if active\n      console.log e\n\n  document.addEventListener \"mouseup\", (e) ->\n    console.log e\n    active = false\n",
       "mode": "100644"
     }
   },
   "distribution": {
-    "main": {
-      "path": "main",
-      "content": "(function() {\n  var Preload, Renderer, World, canvas, draw, renderer, step, update, view, world;\n\n  require(\"./setup\");\n\n  canvas = require(\"./canvas\");\n\n  World = require(\"./world\");\n\n  Renderer = require(\"./render\");\n\n  renderer = null;\n\n  view = {\n    x: 12,\n    y: 7,\n    width: 32,\n    height: 18\n  };\n\n  world = World({\n    width: 512,\n    height: 512\n  });\n\n  update = function() {};\n\n  draw = function() {\n    return renderer != null ? renderer.draw(canvas, world, view) : void 0;\n  };\n\n  step = function() {\n    update();\n    draw();\n    return requestAnimationFrame(step);\n  };\n\n  step();\n\n  Preload = require(\"./preload\");\n\n  Promise.all([\"Objects/Wall\", \"Objects/Floor\", \"Objects/Ground0\", \"Objects/Ground1\", \"Characters/Player0\", \"Characters/Player1\"].map(Preload.image)).then(function(sheets) {\n    var characters, tiles;\n    tiles = [[1, 1, 19], [1, 8, 7, true], [1, 15, 7, true], [1, 15, 19, true], [0, 3, 3], [4, 0, 0], [5, 0, 0]];\n    characters = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return [4, x, 0];\n    });\n    return renderer = Renderer(sheets, tiles, characters);\n  });\n\n}).call(this);\n",
-      "type": "blob"
-    },
-    "render": {
-      "path": "render",
-      "content": "(function() {\n  var Matrix;\n\n  Matrix = require(\"matrix\");\n\n  module.exports = function(sheets, tiles, characters) {\n    var S, adjacents, autoTileDelta, autoTileValue, drawCharacter, drawSprite, drawTile;\n    S = 16;\n    autoTileDelta = [[4, -1], [2, 1], [3, 0], [-1, 1], [2, -1], [2, 0], [-1, -1], [-1, 0], [5, 0], [1, 1], [4, 0], [0, 1], [1, -1], [1, 0], [0, -1], [0, 0]];\n    adjacents = [[0, -1], [1, 0], [0, 1], [-1, 0]];\n    autoTileValue = function(world, tile, x, y) {\n      var mult;\n      mult = 1;\n      return adjacents.map(function(_arg) {\n        var dx, dy, _ref;\n        dx = _arg[0], dy = _arg[1];\n        return ((_ref = world.getTile(x + dx, y + dy)) != null ? _ref : tile) === tile;\n      }).reduce(function(total, match) {\n        total = total + match * mult;\n        mult *= 2;\n        return total;\n      }, 0);\n    };\n    drawSprite = function(canvas, sheet, sx, sy, x, y) {\n      return canvas.drawImage(sheet, sx * S, sy * S, S, S, x * S, y * S, S, S);\n    };\n    drawCharacter = function(canvas, index, t, x, y) {\n      var sheet, sheetIndex, tx, ty, _ref;\n      _ref = characters[index], sheetIndex = _ref[0], tx = _ref[1], ty = _ref[2];\n      if (t % 1000 < 500) {\n        sheetIndex += 1;\n      }\n      sheet = sheets[sheetIndex];\n      drawSprite(canvas, sheet, tx, ty, x, y);\n    };\n    drawTile = function(canvas, world, index, x, y) {\n      var autoTile, dtx, dty, sheet, sheetIndex, tx, ty, _ref, _ref1;\n      _ref = tiles[index], sheetIndex = _ref[0], tx = _ref[1], ty = _ref[2], autoTile = _ref[3];\n      sheet = sheets[sheetIndex];\n      if (autoTile) {\n        _ref1 = autoTileDelta[autoTileValue(world, index, x, y)], dtx = _ref1[0], dty = _ref1[1];\n        tx += dtx;\n        ty += dty;\n      }\n      drawSprite(canvas, sheet, tx, ty, x, y);\n    };\n    return {\n      draw: function(canvas, world, view) {\n        var t, transform;\n        t = +(new Date);\n        canvas.fill('rgb(89, 125, 206)');\n        transform = Matrix.translate(-S * view.x, -S * view.y);\n        return canvas.withTransform(transform, function(canvas) {\n          world.region(view, function(value, x, y) {\n            drawTile(canvas, world, value, x, y);\n          });\n          return world.entities().forEach(function(_arg) {\n            var index, x, y;\n            index = _arg[0], x = _arg[1], y = _arg[2];\n            return drawCharacter(canvas, index, t, x, y);\n          });\n        });\n      }\n    };\n  };\n\n}).call(this);\n",
-      "type": "blob"
-    },
     "canvas": {
       "path": "canvas",
-      "content": "(function() {\n  var TouchCanvas, canvas;\n\n  TouchCanvas = require(\"touch-canvas\");\n\n  canvas = TouchCanvas({\n    width: 512,\n    height: 288\n  });\n\n  document.body.appendChild(canvas.element());\n\n  module.exports = canvas;\n\n}).call(this);\n",
-      "type": "blob"
-    },
-    "pixie": {
-      "path": "pixie",
-      "content": "module.exports = {\"width\":1536,\"height\":864,\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"matrix\":\"distri/matrix:master\",\"touch-canvas\":\"distri/touch-canvas:v0.3.1\"}};",
-      "type": "blob"
-    },
-    "style": {
-      "path": "style",
-      "content": "module.exports = \"* {\\n  box-sizing: border-box;\\n}\\nhtml {\\n  height: 100%;\\n}\\nbody {\\n  background-color: #140c1c;\\n  font-family: \\\"HelveticaNeue-Light\\\", \\\"Helvetica Neue Light\\\", \\\"Helvetica Neue\\\", Helvetica, Arial, \\\"Lucida Grande\\\", sans-serif;\\n  font-weight: 300;\\n  font-size: 18px;\\n  height: 100%;\\n  margin: 0;\\n  overflow: hidden;\\n  user-select: none;\\n}\\ncanvas {\\n  bottom: 0;\\n  position: absolute;\\n  top: 0;\\n  left: 0;\\n  right: 0;\\n  margin: auto;\\n  width: 1536px;\\n  height: 864px;\\n  image-rendering: -moz-crisp-edges;\\n  image-rendering: -o-crisp-edges;\\n  image-rendering: -webkit-optimize-contrast;\\n  image-rendering: pixelated;\\n  -ms-interpolation-mode: nearest-neighbor;\\n}\\n\";",
-      "type": "blob"
-    },
-    "setup": {
-      "path": "setup",
-      "content": "(function() {\n  var styleNode;\n\n  styleNode = document.createElement(\"style\");\n\n  styleNode.innerHTML = require(\"./style\");\n\n  document.head.appendChild(styleNode);\n\n}).call(this);\n",
-      "type": "blob"
-    },
-    "preload": {
-      "path": "preload",
-      "content": "(function() {\n  var Ajax, ajax, basePath;\n\n  Ajax = require(\"ajax\");\n\n  ajax = Ajax();\n\n  basePath = \"https://danielx.whimsy.space/DawnLike/\";\n\n  module.exports = {\n    image: function(name) {\n      return ajax.getBlob(\"\" + basePath + name + \".png?o_0\").then(function(blob) {\n        return new Promise(function(resolve, reject) {\n          var img;\n          img = new Image;\n          img.onload = function() {\n            return resolve(img);\n          };\n          img.onerror = reject;\n          return img.src = URL.createObjectURL(blob);\n        });\n      });\n    }\n  };\n\n}).call(this);\n",
-      "type": "blob"
-    },
-    "world": {
-      "path": "world",
-      "content": "(function() {\n  var ByteGrid, rand;\n\n  ByteGrid = require(\"./lib/byte-grid\");\n\n  rand = function(n) {\n    return Math.floor(Math.random() * n);\n  };\n\n  module.exports = function(I) {\n    var entities, grid, height, self, width, _i, _results;\n    width = I.width, height = I.height;\n    grid = ByteGrid({\n      width: width,\n      height: height\n    });\n    (function() {\n      _results = [];\n      for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n      return _results;\n    }).apply(this).forEach(function(y) {\n      var _i, _results;\n      return (function() {\n        _results = [];\n        for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n        return _results;\n      }).apply(this).forEach(function(x) {\n        return grid.set(x, y, rand(2));\n      });\n    });\n    entities = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return [x, 16 + x % 5, 13 + x % 3];\n    });\n    return self = {\n      getTile: grid.get,\n      region: grid.region,\n      entities: function() {\n        return entities;\n      }\n    };\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  var TouchCanvas;\n\n  TouchCanvas = require(\"touch-canvas\");\n\n  module.exports = function(viewport) {\n    var canvas, initialPan, startPos;\n    canvas = TouchCanvas({\n      width: 512,\n      height: 288\n    });\n    startPos = null;\n    initialPan = null;\n    canvas.on(\"touch\", function(e) {\n      startPos = e;\n      return initialPan = {\n        x: viewport.x,\n        y: viewport.y\n      };\n    });\n    canvas.on(\"move\", function(_arg) {\n      var deltaX, deltaY, sX, sY, x, y;\n      x = _arg.x, y = _arg.y;\n      if (startPos) {\n        sX = startPos.x, sY = startPos.y;\n        deltaX = (sX - x) * viewport.width;\n        deltaY = (sY - y) * viewport.height;\n        viewport.x = initialPan.x + deltaX;\n        return viewport.y = initialPan.y + deltaY;\n      }\n    });\n    canvas.on(\"release\", function(e) {\n      console.log(e, viewport);\n      return startPos = null;\n    });\n    return canvas;\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "lib/byte-grid": {
@@ -114,14 +95,54 @@
       "content": "(function() {\n  module.exports = function(_arg) {\n    var data, height, length, self, width;\n    width = _arg.width, height = _arg.height, data = _arg.data;\n    length = width * height;\n    if (data == null) {\n      data = new Uint8Array(length);\n    }\n    return self = {\n      region: function(rect, iterator) {\n        var x, xPosition, xStart, y, yPosition, yStart;\n        xStart = rect.x;\n        yStart = rect.y;\n        y = 0;\n        while (y < rect.height) {\n          x = 0;\n          while (x < rect.width) {\n            xPosition = x + xStart;\n            yPosition = y + yStart;\n            iterator(self.get(xPosition, yPosition), xPosition, yPosition);\n            x += 1;\n          }\n          y += 1;\n        }\n        return self;\n      },\n      get: function(x, y) {\n        if ((0 <= x && x < width) && (0 <= y && y < height)) {\n          return data[y * width + x];\n        }\n      },\n      set: function(x, y, value) {\n        if ((0 <= x && x < width) && (0 <= y && y < height)) {\n          return data[y * width + x] = value;\n        } else {\n          throw new Error(\"index out of bounds\");\n        }\n      },\n      data: data\n    };\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
+    "lib/extensions": {
+      "path": "lib/extensions",
+      "content": "(function() {\n  var _base;\n\n  if ((_base = CanvasRenderingContext2D.prototype).withTransform == null) {\n    _base.withTransform = function(matrix, block) {\n      this.save();\n      this.transform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);\n      try {\n        block(this);\n      } finally {\n        this.restore();\n      }\n      return this;\n    };\n  }\n\n}).call(this);\n",
+      "type": "blob"
+    },
+    "main": {
+      "path": "main",
+      "content": "(function() {\n  var Preload, Renderer, World, canvas, draw, renderer, step, update, view, world;\n\n  require(\"./setup\");\n\n  World = require(\"./world\");\n\n  Renderer = require(\"./render\");\n\n  renderer = null;\n\n  view = {\n    x: 0,\n    y: 0,\n    width: 32,\n    height: 18\n  };\n\n  global.view = view;\n\n  world = World({\n    width: 512,\n    height: 512\n  });\n\n  canvas = require(\"./canvas\")(view);\n\n  document.body.appendChild(canvas.element());\n\n  update = function() {};\n\n  draw = function() {\n    return renderer != null ? renderer.draw(canvas, world, view) : void 0;\n  };\n\n  step = function() {\n    update();\n    draw();\n    return requestAnimationFrame(step);\n  };\n\n  step();\n\n  Preload = require(\"./preload\");\n\n  Promise.all([\"Objects/Wall\", \"Objects/Floor\", \"Objects/Ground0\", \"Objects/Ground1\", \"Characters/Player0\", \"Characters/Player1\"].map(Preload.image)).then(function(sheets) {\n    var characters, tiles;\n    tiles = [[1, 1, 19], [1, 8, 7, true], [1, 15, 7, true], [1, 15, 19, true], [0, 3, 3], [4, 0, 0], [5, 0, 0]];\n    characters = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return [4, x, 0];\n    });\n    return renderer = Renderer(sheets, tiles, characters);\n  });\n\n}).call(this);\n",
+      "type": "blob"
+    },
+    "pixie": {
+      "path": "pixie",
+      "content": "module.exports = {\"width\":1536,\"height\":864,\"dependencies\":{\"ajax\":\"distri/ajax:master\",\"matrix\":\"distri/matrix:master\",\"touch-canvas\":\"distri/touch-canvas:v0.3.1\"}};",
+      "type": "blob"
+    },
+    "preload": {
+      "path": "preload",
+      "content": "(function() {\n  var Ajax, ajax, basePath;\n\n  Ajax = require(\"ajax\");\n\n  ajax = Ajax();\n\n  basePath = \"https://danielx.whimsy.space/DawnLike/\";\n\n  module.exports = {\n    image: function(name) {\n      return ajax.getBlob(\"\" + basePath + name + \".png?o_0\").then(function(blob) {\n        return new Promise(function(resolve, reject) {\n          var img;\n          img = new Image;\n          img.onload = function() {\n            return resolve(img);\n          };\n          img.onerror = reject;\n          return img.src = URL.createObjectURL(blob);\n        });\n      });\n    }\n  };\n\n}).call(this);\n",
+      "type": "blob"
+    },
+    "render": {
+      "path": "render",
+      "content": "(function() {\n  var Matrix;\n\n  Matrix = require(\"matrix\");\n\n  module.exports = function(sheets, tiles, characters) {\n    var S, adjacents, autoTileDelta, autoTileValue, drawCharacter, drawSprite, drawTile;\n    S = 16;\n    autoTileDelta = [[4, -1], [2, 1], [3, 0], [-1, 1], [2, -1], [2, 0], [-1, -1], [-1, 0], [5, 0], [1, 1], [4, 0], [0, 1], [1, -1], [1, 0], [0, -1], [0, 0]];\n    adjacents = [[0, -1], [1, 0], [0, 1], [-1, 0]];\n    autoTileValue = function(world, tile, x, y) {\n      var mult;\n      mult = 1;\n      return adjacents.map(function(_arg) {\n        var dx, dy, _ref;\n        dx = _arg[0], dy = _arg[1];\n        return ((_ref = world.getTile(x + dx, y + dy)) != null ? _ref : tile) === tile;\n      }).reduce(function(total, match) {\n        total = total + match * mult;\n        mult *= 2;\n        return total;\n      }, 0);\n    };\n    drawSprite = function(canvas, sheet, sx, sy, x, y) {\n      return canvas.drawImage(sheet, sx * S, sy * S, S, S, x * S, y * S, S, S);\n    };\n    drawCharacter = function(canvas, index, t, x, y) {\n      var sheet, sheetIndex, tx, ty, _ref;\n      _ref = characters[index], sheetIndex = _ref[0], tx = _ref[1], ty = _ref[2];\n      if (t % 1000 < 500) {\n        sheetIndex += 1;\n      }\n      sheet = sheets[sheetIndex];\n      drawSprite(canvas, sheet, tx, ty, x, y);\n    };\n    drawTile = function(canvas, world, index, x, y) {\n      var autoTile, dtx, dty, sheet, sheetIndex, tx, ty, _ref, _ref1;\n      if (index == null) {\n        return;\n      }\n      _ref = tiles[index], sheetIndex = _ref[0], tx = _ref[1], ty = _ref[2], autoTile = _ref[3];\n      sheet = sheets[sheetIndex];\n      if (autoTile) {\n        _ref1 = autoTileDelta[autoTileValue(world, index, x, y)], dtx = _ref1[0], dty = _ref1[1];\n        tx += dtx;\n        ty += dty;\n      }\n      drawSprite(canvas, sheet, tx, ty, x, y);\n    };\n    return {\n      draw: function(canvas, world, view) {\n        var renderView, t, transform;\n        t = +(new Date);\n        canvas.fill('rgb(89, 125, 206)');\n        transform = Matrix.translate((-S * view.x) | 0, (-S * view.y) | 0);\n        renderView = {\n          x: Math.floor(view.x),\n          y: Math.floor(view.y),\n          width: view.width + 1,\n          height: view.height + 1\n        };\n        return canvas.withTransform(transform, function(canvas) {\n          world.region(renderView, function(value, x, y) {\n            drawTile(canvas, world, value, x, y);\n          });\n          return world.entities().forEach(function(_arg) {\n            var index, x, y;\n            index = _arg[0], x = _arg[1], y = _arg[2];\n            return drawCharacter(canvas, index, t, x, y);\n          });\n        });\n      }\n    };\n  };\n\n}).call(this);\n",
+      "type": "blob"
+    },
+    "setup": {
+      "path": "setup",
+      "content": "(function() {\n  var styleNode;\n\n  styleNode = document.createElement(\"style\");\n\n  styleNode.innerHTML = require(\"./style\");\n\n  document.head.appendChild(styleNode);\n\n}).call(this);\n",
+      "type": "blob"
+    },
+    "style": {
+      "path": "style",
+      "content": "module.exports = \"* {\\n  box-sizing: border-box;\\n}\\nhtml {\\n  height: 100%;\\n}\\nbody {\\n  background-color: #140c1c;\\n  font-family: \\\"HelveticaNeue-Light\\\", \\\"Helvetica Neue Light\\\", \\\"Helvetica Neue\\\", Helvetica, Arial, \\\"Lucida Grande\\\", sans-serif;\\n  font-weight: 300;\\n  font-size: 18px;\\n  height: 100%;\\n  margin: 0;\\n  overflow: hidden;\\n  user-select: none;\\n}\\ncanvas {\\n  bottom: 0;\\n  position: absolute;\\n  top: 0;\\n  left: 0;\\n  right: 0;\\n  margin: auto;\\n  width: 1536px;\\n  height: 864px;\\n  image-rendering: -moz-crisp-edges;\\n  image-rendering: -o-crisp-edges;\\n  image-rendering: -webkit-optimize-contrast;\\n  image-rendering: pixelated;\\n  -ms-interpolation-mode: nearest-neighbor;\\n}\\n\";",
+      "type": "blob"
+    },
     "test/byte-grid": {
       "path": "test/byte-grid",
       "content": "(function() {\n  var ByteGrid;\n\n  ByteGrid = require(\"../lib/byte-grid\");\n\n  describe(\"Byte Grid\", function() {\n    it(\"should be a grid of bytes\", function() {\n      var grid;\n      grid = ByteGrid({\n        width: 10,\n        height: 10\n      });\n      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function(y) {\n        return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function(x) {\n          return grid.set(x, y, x + 10 * y);\n        });\n      });\n      assert.equal(grid.get(5, 5), 55);\n      return assert.equal(grid.get(7, 1), 17);\n    });\n    return it(\"should iterate a region\", function() {\n      var grid, rect;\n      grid = ByteGrid({\n        width: 10,\n        height: 10\n      });\n      [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function(y) {\n        return [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function(x) {\n          return grid.set(x, y, x + 10 * y);\n        });\n      });\n      rect = {\n        x: 3,\n        y: 2,\n        width: 3,\n        height: 2\n      };\n      return grid.region(rect, function(value, x, y) {\n        return console.log(x, y, value);\n      });\n    });\n  });\n\n}).call(this);\n",
       "type": "blob"
     },
-    "lib/extensions": {
-      "path": "lib/extensions",
-      "content": "(function() {\n  var _base;\n\n  if ((_base = CanvasRenderingContext2D.prototype).withTransform == null) {\n    _base.withTransform = function(matrix, block) {\n      this.save();\n      this.transform(matrix.a, matrix.b, matrix.c, matrix.d, matrix.tx, matrix.ty);\n      try {\n        block(this);\n      } finally {\n        this.restore();\n      }\n      return this;\n    };\n  }\n\n}).call(this);\n",
+    "world": {
+      "path": "world",
+      "content": "(function() {\n  var ByteGrid, rand;\n\n  ByteGrid = require(\"./lib/byte-grid\");\n\n  rand = function(n) {\n    return Math.floor(Math.random() * n);\n  };\n\n  module.exports = function(I) {\n    var entities, grid, height, self, width, _i, _results;\n    width = I.width, height = I.height;\n    grid = ByteGrid({\n      width: width,\n      height: height\n    });\n    (function() {\n      _results = [];\n      for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n      return _results;\n    }).apply(this).forEach(function(y) {\n      var _i, _results;\n      return (function() {\n        _results = [];\n        for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n        return _results;\n      }).apply(this).forEach(function(x) {\n        return grid.set(x, y, rand(2));\n      });\n    });\n    entities = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return [x, 16 + x % 5, 13 + x % 3];\n    });\n    return self = {\n      getTile: grid.get,\n      region: grid.region,\n      entities: function() {\n        return entities;\n      }\n    };\n  };\n\n}).call(this);\n",
+      "type": "blob"
+    },
+    "input": {
+      "path": "input",
+      "content": "(function() {\n  module.exports = function() {\n    var active;\n    active = false;\n    document.addEventListener(\"mousedown\", function(e) {\n      console.log(e);\n      return active = true;\n    });\n    document.addEventListener(\"mousemove\", function(e) {\n      if (active) {\n        return console.log(e);\n      }\n    });\n    return document.addEventListener(\"mouseup\", function(e) {\n      console.log(e);\n      return active = false;\n    });\n  };\n\n}).call(this);\n",
       "type": "blob"
     }
   },
