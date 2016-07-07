@@ -50,11 +50,14 @@ Promise.all [
   "Objects/Ground1"
   "Characters/Player0"
   "Characters/Player1"
+  "Objects/Pit0"
+  "Objects/Pit1"
 ].map Preload.image
 .then (sheets) ->
   # Sheet index, sheetX, sheetY
   tiles = [
     [1, 1, 19]
+    [6, 1, 11]
     [1, 8, 7, true]
     [1, 15, 7, true]
     [1, 15, 19, true]
