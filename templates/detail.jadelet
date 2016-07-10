@@ -1,0 +1,4 @@
+- CharacterCard = require "./character-card"
+
+.detail
+  = CharacterCard {}

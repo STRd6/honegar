@@ -1,0 +1,9 @@
+- Actions = require "./actions"
+- Detail = require "./detail"
+- Tools = require "./tools"
+
+main
+  = @canvas
+  = Actions this
+  = Tools this
+  = Detail this

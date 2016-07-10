@@ -1,0 +1,6 @@
+- generator = require("/culture/name_generator")()
+
+card
+  label
+    h2 Name
+    = generator.generate()

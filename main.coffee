@@ -31,7 +31,10 @@ state =
   activeTool: "pan"
 
 canvas = require("./canvas")(state)
-document.body.appendChild canvas.element()
+
+Template = require "./templates/main"
+document.body.appendChild Template 
+  canvas: canvas.element()
 
 update = ->
 
