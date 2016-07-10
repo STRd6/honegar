@@ -1,4 +1,5 @@
 AngloSaxon = require "./data/names/anglo-saxon"
+Cities = require "./data/cities/ca"
 
 rand = (array) ->
   index = Math.floor Math.random() * array.length
@@ -8,4 +9,6 @@ rand = (array) ->
 module.exports = ->
   generate: ->
     rand(AngloSaxon.male)[0]
-    
+
+  randomCity: ->
+    rand(Cities)

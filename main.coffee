@@ -33,7 +33,7 @@ state =
 canvas = require("./canvas")(state)
 
 Template = require "./templates/main"
-document.body.appendChild Template 
+document.body.appendChild Template
   canvas: canvas.element()
 
 update = ->
