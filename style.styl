@@ -15,6 +15,17 @@ body
   overflow: hidden
   user-select: none
 
+h1, h2, h3
+  margin: 0
+
+label 
+  display: block
+
+  > h3
+    display: inline-block
+    font-size: 100%
+    margin-right: 0.25em
+
 canvas
   bottom: 0
   position: absolute
@@ -35,4 +46,12 @@ canvas
   right: 0
   height: 100%
   width: 300px
+  pointer-events: none
+
+card
+  border: 1px solid #1B1421
+  display: block
+  border-radius: 4px
+  padding: 8px
   background-color: #DEEED6
+  pointer-events: all

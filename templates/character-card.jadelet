@@ -1,6 +1,10 @@
 - generator = require("/culture/name_generator")()
 
 card
+  h2= generator.generate()
   label
-    h2 Name
-    = generator.generate()
+    h3 Age
+    span= Math.floor Math.random()*30 + 11
+  label
+    h3 Hometown
+    span City of Industry
