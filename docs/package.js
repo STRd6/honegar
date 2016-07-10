@@ -253,7 +253,7 @@
     },
     "style.styl": {
       "path": "style.styl",
-      "content": "*\n  box-sizing: border-box\n\nhtml\n  height: 100%\n\nbody\n  background-color: rgb(20,12,28)\n  color: #1B1421\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif\n  font-weight: 300\n  font-size: 18px\n  height: 100%\n  margin: 0\n  overflow: hidden\n  user-select: none\n\ncanvas\n  bottom: 0\n  position: absolute\n  top: 0\n  left: 0\n  right: 0\n  margin: auto\n  width: 1536px\n  height: 864px\n  image-rendering: -moz-crisp-edges\n  image-rendering: -o-crisp-edges\n  image-rendering: -webkit-optimize-contrast\n  image-rendering: pixelated\n  -ms-interpolation-mode: nearest-neighbor\n\n.detail\n  position: absolute\n  right: 0\n  height: 100%\n  width: 300px\n  background-color: #DEEED6\n",
+      "content": "*\n  box-sizing: border-box\n\nhtml\n  height: 100%\n\nbody\n  background-color: rgb(20,12,28)\n  color: #1B1421\n  font-family: \"HelveticaNeue-Light\", \"Helvetica Neue Light\", \"Helvetica Neue\", Helvetica, Arial, \"Lucida Grande\", sans-serif\n  font-weight: 300\n  font-size: 18px\n  height: 100%\n  margin: 0\n  overflow: hidden\n  user-select: none\n\nh1, h2, h3\n  margin: 0\n\nlabel \n  display: block\n\n  > h3\n    display: inline-block\n    font-size: 100%\n    margin-right: 0.25em\n\ncanvas\n  bottom: 0\n  position: absolute\n  top: 0\n  left: 0\n  right: 0\n  margin: auto\n  width: 1536px\n  height: 864px\n  image-rendering: -moz-crisp-edges\n  image-rendering: -o-crisp-edges\n  image-rendering: -webkit-optimize-contrast\n  image-rendering: pixelated\n  -ms-interpolation-mode: nearest-neighbor\n\n.detail\n  position: absolute\n  right: 0\n  height: 100%\n  width: 300px\n  pointer-events: none\n\ncard\n  border: 1px solid #1B1421\n  display: block\n  border-radius: 4px\n  padding: 8px\n  background-color: #DEEED6\n  pointer-events: all\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -306,7 +306,7 @@
     },
     "templates/character-card.jadelet": {
       "path": "templates/character-card.jadelet",
-      "content": "- generator = require(\"/culture/name_generator\")()\n\ncard\n  label\n    h2 Name\n    = generator.generate()\n",
+      "content": "- generator = require(\"/culture/name_generator\")()\n\ncard\n  h2= generator.generate()\n  label\n    h3 Age\n    span= Math.floor Math.random()*30 + 11\n  label\n    h3 Hometown\n    span City of Industry\n",
       "mode": "100644"
     }
   },
@@ -358,7 +358,7 @@
     },
     "style": {
       "path": "style",
-      "content": "module.exports = \"* {\\n  box-sizing: border-box;\\n}\\nhtml {\\n  height: 100%;\\n}\\nbody {\\n  background-color: #140c1c;\\n  color: #1b1421;\\n  font-family: \\\"HelveticaNeue-Light\\\", \\\"Helvetica Neue Light\\\", \\\"Helvetica Neue\\\", Helvetica, Arial, \\\"Lucida Grande\\\", sans-serif;\\n  font-weight: 300;\\n  font-size: 18px;\\n  height: 100%;\\n  margin: 0;\\n  overflow: hidden;\\n  user-select: none;\\n}\\ncanvas {\\n  bottom: 0;\\n  position: absolute;\\n  top: 0;\\n  left: 0;\\n  right: 0;\\n  margin: auto;\\n  width: 1536px;\\n  height: 864px;\\n  image-rendering: -moz-crisp-edges;\\n  image-rendering: -o-crisp-edges;\\n  image-rendering: -webkit-optimize-contrast;\\n  image-rendering: pixelated;\\n  -ms-interpolation-mode: nearest-neighbor;\\n}\\n.detail {\\n  position: absolute;\\n  right: 0;\\n  height: 100%;\\n  width: 300px;\\n  background-color: #deeed6;\\n}\\n\";",
+      "content": "module.exports = \"* {\\n  box-sizing: border-box;\\n}\\nhtml {\\n  height: 100%;\\n}\\nbody {\\n  background-color: #140c1c;\\n  color: #1b1421;\\n  font-family: \\\"HelveticaNeue-Light\\\", \\\"Helvetica Neue Light\\\", \\\"Helvetica Neue\\\", Helvetica, Arial, \\\"Lucida Grande\\\", sans-serif;\\n  font-weight: 300;\\n  font-size: 18px;\\n  height: 100%;\\n  margin: 0;\\n  overflow: hidden;\\n  user-select: none;\\n}\\nh1,\\nh2,\\nh3 {\\n  margin: 0;\\n}\\nlabel {\\n  display: block;\\n}\\nlabel > h3 {\\n  display: inline-block;\\n  font-size: 100%;\\n  margin-right: 0.25em;\\n}\\ncanvas {\\n  bottom: 0;\\n  position: absolute;\\n  top: 0;\\n  left: 0;\\n  right: 0;\\n  margin: auto;\\n  width: 1536px;\\n  height: 864px;\\n  image-rendering: -moz-crisp-edges;\\n  image-rendering: -o-crisp-edges;\\n  image-rendering: -webkit-optimize-contrast;\\n  image-rendering: pixelated;\\n  -ms-interpolation-mode: nearest-neighbor;\\n}\\n.detail {\\n  position: absolute;\\n  right: 0;\\n  height: 100%;\\n  width: 300px;\\n  pointer-events: none;\\n}\\ncard {\\n  border: 1px solid #1b1421;\\n  display: block;\\n  border-radius: 4px;\\n  padding: 8px;\\n  background-color: #deeed6;\\n  pointer-events: all;\\n}\\n\";",
       "type": "blob"
     },
     "test/byte-grid": {
@@ -408,7 +408,7 @@
     },
     "templates/character-card": {
       "path": "templates/character-card",
-      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var generator, __root;\n    __root = require(\"/lib/hamlet-runtime\")(this);\n    generator = require(\"/culture/name_generator\")();\n    __root.buffer(__root.element(\"card\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"label\", this, {}, function(__root) {\n        __root.buffer(__root.element(\"h2\", this, {}, function(__root) {\n          __root.buffer(\"Name\\n\");\n        }));\n        __root.buffer(generator.generate());\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
+      "content": "module.exports = function(data) {\n  \"use strict\";\n  return (function() {\n    var generator, __root;\n    __root = require(\"/lib/hamlet-runtime\")(this);\n    generator = require(\"/culture/name_generator\")();\n    __root.buffer(__root.element(\"card\", this, {}, function(__root) {\n      __root.buffer(__root.element(\"h2\", this, {}, function(__root) {\n        __root.buffer(generator.generate());\n      }));\n      __root.buffer(__root.element(\"label\", this, {}, function(__root) {\n        __root.buffer(__root.element(\"h3\", this, {}, function(__root) {\n          __root.buffer(\"Age\\n\");\n        }));\n        __root.buffer(__root.element(\"span\", this, {}, function(__root) {\n          __root.buffer(Math.floor(Math.random() * 30 + 11));\n        }));\n      }));\n      __root.buffer(__root.element(\"label\", this, {}, function(__root) {\n        __root.buffer(__root.element(\"h3\", this, {}, function(__root) {\n          __root.buffer(\"Hometown\\n\");\n        }));\n        __root.buffer(__root.element(\"span\", this, {}, function(__root) {\n          __root.buffer(\"City of Industry\\n\");\n        }));\n      }));\n    }));\n    return __root.root;\n  }).call(data);\n};\n",
       "type": "blob"
     },
     "lib/hamlet-runtime": {
