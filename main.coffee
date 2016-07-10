@@ -25,13 +25,18 @@ world = World
   width: 512
   height: 512
 
-canvas = require("./canvas")(view)
+state =
+  viewport: view
+  world: world
+  activeTool: "pan"
+
+canvas = require("./canvas")(state)
 document.body.appendChild canvas.element()
 
 update = ->
 
 draw = ->
-  renderer?.draw(canvas, world, view)
+  renderer?.draw(canvas, state)
 
 step = ->
   update()

@@ -75,17 +75,17 @@ module.exports = (sheets, tiles, characters) ->
 
     return
 
-  draw: (canvas, world, view) ->
+  draw: (canvas, {world, viewport}) ->
     t = +new Date
     canvas.fill('rgb(89, 125, 206)')
 
-    transform = Matrix.translate((-S * view.x)|0, (-S * view.y)|0)
-    
+    transform = Matrix.translate((-S * viewport.x)|0, (-S * viewport.y)|0)
+
     renderView =
-      x: Math.floor view.x
-      y: Math.floor view.y
-      width: view.width + 1
-      height: view.height + 1
+      x: Math.floor viewport.x
+      y: Math.floor viewport.y
+      width: viewport.width + 1
+      height: viewport.height + 1
 
     canvas.withTransform transform, (canvas) ->
       # Draw Tiles
