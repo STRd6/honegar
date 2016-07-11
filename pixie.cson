@@ -3,4 +3,5 @@ height: 864
 dependencies:
   ajax: "distri/ajax:master"
   matrix: "distri/matrix:master"
+  model: "distri/model:master"
   "touch-canvas": "distri/touch-canvas:v0.3.1"

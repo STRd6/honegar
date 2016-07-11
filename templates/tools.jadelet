@@ -1,1 +1,6 @@
 .tools
+  - self = this
+  - @tools.forEach (name) ->
+    - click = -> self.activeTool name
+    - active = -> "active" if name is self.activeTool()
+    button(click=click class=active)= name

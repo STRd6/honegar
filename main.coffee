@@ -7,8 +7,7 @@
 # Watch as they scamper around
 
 require "./setup"
-#require("./input")()
-
+Game = require "./game"
 World = require "./world"
 
 Renderer = require "./render"
@@ -29,12 +28,18 @@ state =
   viewport: view
   world: world
   activeTool: "pan"
+  tools: """
+    pan
+    inspect
+  """.split("\n")
 
-canvas = require("./canvas")(state)
+game = Game state
+
+canvas = require("./canvas")(game)
+game.canvas = canvas.element()
 
 Template = require "./templates/main"
-document.body.appendChild Template
-  canvas: canvas.element()
+document.body.appendChild Template game
 
 update = ->
 

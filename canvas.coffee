@@ -1,18 +1,18 @@
 TouchCanvas = require "touch-canvas"
 
-module.exports = (state) ->
+module.exports = (game) ->
   canvas = TouchCanvas
     width: 512
     height: 288
 
   canvas.on "touch", (e) ->
-    Tools[state.activeTool].touch(e, state)
+    Tools[game.activeTool()].touch(e, game)
 
   canvas.on "move", (e) ->
-    Tools[state.activeTool].move(e, state)
+    Tools[game.activeTool()].move(e, game)
 
   canvas.on "release", (e) ->
-    Tools[state.activeTool].release(e, state)
+    Tools[game.activeTool()].release(e, game)
 
   return canvas
 
@@ -26,13 +26,17 @@ Tools =
     startPos = null
     initialPan = null
 
-    touch: (e, {viewport}) ->
+    touch: (e, game) ->
+      viewport = game.viewport()
+
       startPos = e
       initialPan =
         x: viewport.x
         y: viewport.y
 
-    move: ({x, y}, {viewport}) ->
+    move: ({x, y}, game) ->
+      viewport = game.viewport()
+
       if startPos
         {x:sX, y:sY} = startPos
         deltaX = (sX - x) * viewport.width
@@ -41,12 +45,11 @@ Tools =
         viewport.x = initialPan.x + deltaX
         viewport.y = initialPan.y + deltaY
 
-    release: (e, {viewport}) ->
-      console.log e, viewport
+    release: (e, game) ->
       startPos = null
 
-  inspect: SimpleTool (e, state) ->
-    console.log worldPosition(e, state.viewport)
+  inspect: SimpleTool (e, game) ->
+    console.log worldPosition(e, game.viewport())
 
 worldPosition = ({x, y}, viewport) ->
   x: x * viewport.width
