@@ -75,7 +75,10 @@ module.exports = (sheets, tiles, characters) ->
 
     return
 
-  draw: (canvas, {world, viewport}) ->
+  draw: (canvas, game) ->
+    world = game.world()
+    viewport = game.viewport()
+
     t = +new Date
     canvas.fill('rgb(89, 125, 206)')
 

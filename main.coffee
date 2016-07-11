@@ -8,7 +8,6 @@
 
 require "./setup"
 Game = require "./game"
-World = require "./world"
 
 Renderer = require "./render"
 renderer = null
@@ -18,15 +17,12 @@ view =
   y: 0
   width: 32
   height: 18
-global.view = view
-
-world = World
-  width: 512
-  height: 512
 
 state =
   viewport: view
-  world: world
+  world:
+    width: 512
+    height: 512
   activeTool: "pan"
   tools: """
     pan
@@ -42,9 +38,10 @@ Template = require "./templates/main"
 document.body.appendChild Template game
 
 update = ->
+  game.update()
 
 draw = ->
-  renderer?.draw(canvas, state)
+  renderer?.draw(canvas, game)
 
 step = ->
   update()
