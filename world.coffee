@@ -1,7 +1,6 @@
 ByteGrid = require "./lib/byte-grid"
 
-rand = (n) ->
-  Math.floor(Math.random() * n)
+Entity = require "./entity"
 
 module.exports = (I) ->
   {width, height} = I
@@ -15,7 +14,11 @@ module.exports = (I) ->
       grid.set(x, y, rand(3))
 
   entities = [0...8].map (x) ->
-    [x, 16 + x % 5, 13 + x % 3]
+    Entity
+      index: x
+      position:
+        x: 16 + x % 5
+        y: 13 + x % 3
 
   self =
     getTile: grid.get

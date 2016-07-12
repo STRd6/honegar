@@ -2,6 +2,6 @@ width: 1536
 height: 864
 dependencies:
   ajax: "distri/ajax:master"
-  matrix: "distri/matrix:master"
+  math: "distri/math:master"
   model: "distri/model:master"
   "touch-canvas": "distri/touch-canvas:v0.3.1"
