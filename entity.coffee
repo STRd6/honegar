@@ -1,7 +1,14 @@
 Model = require "model"
 
+generator = require("/culture/name_generator")()
+
 module.exports = (I={}, self=Model(I)) ->
-  self.attrObservable "index"
+  defaults I,
+    age: Math.floor Math.random()*30 + 11
+    hometown: generator.randomCity()
+    name: generator.generate()
+
+  self.attrObservable "index", "name"
   self.attrModel "position", Point
 
   self.extend
