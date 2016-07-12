@@ -1,4 +1,4 @@
-require("random")#.pollute()
+require("math").pollute()
 
 styleNode = document.createElement("style")
 styleNode.innerHTML = require "./style"
