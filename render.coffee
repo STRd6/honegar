@@ -1,5 +1,3 @@
-Matrix = require "matrix"
-
 module.exports = (sheets, tiles, characters) ->
   S = 16 # Tile size
 
@@ -99,5 +97,8 @@ module.exports = (sheets, tiles, characters) ->
       # Draw Objects
 
       # Draw Characters
-      world.entities().forEach ([index, x, y]) ->
+      world.entities().forEach (entity) ->
+        index = entity.index()
+        {x, y} = entity.position()
+
         drawCharacter canvas, index, t, x, y
