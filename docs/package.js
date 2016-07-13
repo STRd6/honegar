@@ -223,13 +223,13 @@
     },
     "entity.coffee": {
       "path": "entity.coffee",
-      "content": "Model = require \"model\"\n\ngenerator = require(\"/culture/name_generator\")()\n\nmodule.exports = (I={}, self=Model(I)) ->\n  defaults I,\n    age: Math.floor Math.random()*30 + 11\n    hometown: generator.randomCity()\n    name: generator.generate()\n\n  self.attrObservable \"index\", \"name\"\n  self.attrModel \"position\", Point\n\n  self.extend\n    move: ->\n      position = self.position()\n      delta = Point rand(3)-1, rand(3)-1\n\n      self.position(position.add(delta))\n\n  return self\n",
+      "content": "Model = require \"model\"\n\ngenerator = require(\"/culture/name_generator\")()\n\nmodule.exports = (I={}, self=Model(I)) ->\n  defaults I,\n    age: Math.floor Math.random()*30 + 11\n    hometown: generator.randomCity()\n    name: generator.generate()\n\n  self.attrObservable \"index\", \"name\"\n  self.attrModel \"position\", Point\n\n  self.extend\n    move: (world) ->\n      position = self.position()\n      delta = Point rand(3)-1, rand(3)-1\n\n      newPosition = position.add(delta)\n\n      if world.passable(newPosition)\n        self.position(newPosition)\n\n  return self\n",
       "mode": "100644",
       "type": "blob"
     },
     "game.coffee": {
       "path": "game.coffee",
-      "content": "Model = require \"model\"\n\nWorld = require \"./world\"\n\nmodule.exports = (I={}, self=Model(I)) ->\n  I.step ?= 0\n\n  self.attrObservable \"activeTool\", \"tools\"\n  self.attrAccessor \"viewport\"\n\n  self.attrModel \"world\", World\n\n  self.extend\n    update: ->\n      if I.step % 10 is 0\n        self.world().entities().forEach (entity) ->\n          entity.move()\n\n      I.step += 1\n\n  return self\n",
+      "content": "Model = require \"model\"\n\nWorld = require \"./world\"\n\nmodule.exports = (I={}, self=Model(I)) ->\n  I.step ?= 0\n\n  self.attrObservable \"activeTool\", \"tools\"\n  self.attrAccessor \"viewport\"\n\n  self.attrModel \"world\", World\n\n  self.extend\n    update: ->\n      if I.step % 10 is 0\n        self.world().entities().forEach (entity) ->\n          entity.move(self.world())\n\n      I.step += 1\n\n  return self\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -319,7 +319,7 @@
     },
     "world.coffee": {
       "path": "world.coffee",
-      "content": "ByteGrid = require \"./lib/byte-grid\"\n\nEntity = require \"./entity\"\n\nmodule.exports = (I) ->\n  {width, height} = I\n\n  grid = ByteGrid\n    width: width\n    height: height\n\n  [0...128].forEach (y) ->\n    [0...128].forEach (x) ->\n      grid.set(x, y, rand(3))\n\n  entities = [0...8].map (x) ->\n    Entity\n      index: x\n      position:\n        x: 16 + x % 5\n        y: 13 + x % 3\n\n  self =\n    getTile: grid.get\n    region: grid.region\n\n    entities: ->\n      entities\n",
+      "content": "ByteGrid = require \"./lib/byte-grid\"\n\nEntity = require \"./entity\"\n\nmodule.exports = (I) ->\n  {width, height} = I\n\n  grid = ByteGrid\n    width: width\n    height: height\n\n  [0...128].forEach (y) ->\n    [0...128].forEach (x) ->\n      grid.set(x, y, rand(3))\n\n  entities = [0...8].map (x) ->\n    Entity\n      index: x\n      position:\n        x: 16 + x % 5\n        y: 13 + x % 3\n\n  self =\n    getTile: grid.get\n    region: grid.region\n\n    entities: ->\n      entities\n\n    passable: ({x, y}) ->\n      self.getTile(x, y) != 1\n",
       "mode": "100644",
       "type": "blob"
     }
@@ -347,12 +347,12 @@
     },
     "entity": {
       "path": "entity",
-      "content": "(function() {\n  var Model, generator;\n\n  Model = require(\"model\");\n\n  generator = require(\"/culture/name_generator\")();\n\n  module.exports = function(I, self) {\n    if (I == null) {\n      I = {};\n    }\n    if (self == null) {\n      self = Model(I);\n    }\n    defaults(I, {\n      age: Math.floor(Math.random() * 30 + 11),\n      hometown: generator.randomCity(),\n      name: generator.generate()\n    });\n    self.attrObservable(\"index\", \"name\");\n    self.attrModel(\"position\", Point);\n    self.extend({\n      move: function() {\n        var delta, position;\n        position = self.position();\n        delta = Point(rand(3) - 1, rand(3) - 1);\n        return self.position(position.add(delta));\n      }\n    });\n    return self;\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  var Model, generator;\n\n  Model = require(\"model\");\n\n  generator = require(\"/culture/name_generator\")();\n\n  module.exports = function(I, self) {\n    if (I == null) {\n      I = {};\n    }\n    if (self == null) {\n      self = Model(I);\n    }\n    defaults(I, {\n      age: Math.floor(Math.random() * 30 + 11),\n      hometown: generator.randomCity(),\n      name: generator.generate()\n    });\n    self.attrObservable(\"index\", \"name\");\n    self.attrModel(\"position\", Point);\n    self.extend({\n      move: function(world) {\n        var delta, newPosition, position;\n        position = self.position();\n        delta = Point(rand(3) - 1, rand(3) - 1);\n        newPosition = position.add(delta);\n        if (world.passable(newPosition)) {\n          return self.position(newPosition);\n        }\n      }\n    });\n    return self;\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "game": {
       "path": "game",
-      "content": "(function() {\n  var Model, World;\n\n  Model = require(\"model\");\n\n  World = require(\"./world\");\n\n  module.exports = function(I, self) {\n    if (I == null) {\n      I = {};\n    }\n    if (self == null) {\n      self = Model(I);\n    }\n    if (I.step == null) {\n      I.step = 0;\n    }\n    self.attrObservable(\"activeTool\", \"tools\");\n    self.attrAccessor(\"viewport\");\n    self.attrModel(\"world\", World);\n    self.extend({\n      update: function() {\n        if (I.step % 10 === 0) {\n          self.world().entities().forEach(function(entity) {\n            return entity.move();\n          });\n        }\n        return I.step += 1;\n      }\n    });\n    return self;\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  var Model, World;\n\n  Model = require(\"model\");\n\n  World = require(\"./world\");\n\n  module.exports = function(I, self) {\n    if (I == null) {\n      I = {};\n    }\n    if (self == null) {\n      self = Model(I);\n    }\n    if (I.step == null) {\n      I.step = 0;\n    }\n    self.attrObservable(\"activeTool\", \"tools\");\n    self.attrAccessor(\"viewport\");\n    self.attrModel(\"world\", World);\n    self.extend({\n      update: function() {\n        if (I.step % 10 === 0) {\n          self.world().entities().forEach(function(entity) {\n            return entity.move(self.world());\n          });\n        }\n        return I.step += 1;\n      }\n    });\n    return self;\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "lib/byte-grid": {
@@ -427,7 +427,7 @@
     },
     "world": {
       "path": "world",
-      "content": "(function() {\n  var ByteGrid, Entity;\n\n  ByteGrid = require(\"./lib/byte-grid\");\n\n  Entity = require(\"./entity\");\n\n  module.exports = function(I) {\n    var entities, grid, height, self, width, _i, _results;\n    width = I.width, height = I.height;\n    grid = ByteGrid({\n      width: width,\n      height: height\n    });\n    (function() {\n      _results = [];\n      for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n      return _results;\n    }).apply(this).forEach(function(y) {\n      var _i, _results;\n      return (function() {\n        _results = [];\n        for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n        return _results;\n      }).apply(this).forEach(function(x) {\n        return grid.set(x, y, rand(3));\n      });\n    });\n    entities = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return Entity({\n        index: x,\n        position: {\n          x: 16 + x % 5,\n          y: 13 + x % 3\n        }\n      });\n    });\n    return self = {\n      getTile: grid.get,\n      region: grid.region,\n      entities: function() {\n        return entities;\n      }\n    };\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  var ByteGrid, Entity;\n\n  ByteGrid = require(\"./lib/byte-grid\");\n\n  Entity = require(\"./entity\");\n\n  module.exports = function(I) {\n    var entities, grid, height, self, width, _i, _results;\n    width = I.width, height = I.height;\n    grid = ByteGrid({\n      width: width,\n      height: height\n    });\n    (function() {\n      _results = [];\n      for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n      return _results;\n    }).apply(this).forEach(function(y) {\n      var _i, _results;\n      return (function() {\n        _results = [];\n        for (_i = 0; _i < 128; _i++){ _results.push(_i); }\n        return _results;\n      }).apply(this).forEach(function(x) {\n        return grid.set(x, y, rand(3));\n      });\n    });\n    entities = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return Entity({\n        index: x,\n        position: {\n          x: 16 + x % 5,\n          y: 13 + x % 3\n        }\n      });\n    });\n    return self = {\n      getTile: grid.get,\n      region: grid.region,\n      entities: function() {\n        return entities;\n      },\n      passable: function(_arg) {\n        var x, y;\n        x = _arg.x, y = _arg.y;\n        return self.getTile(x, y) !== 1;\n      }\n    };\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "lib/hamlet-runtime": {
