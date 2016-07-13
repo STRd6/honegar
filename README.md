@@ -48,7 +48,7 @@ Procedurally generated sex acts.
 
 War, famine, capitalism, class struggle
 
-Religious texts encouraging and prohibiting certain actions (expect to see an 
+Religious texts encouraging and prohibiting certain actions (expect to see an
 emergence of memetics and proselytizing)
 
 Ecosystems, plants, fungus, trees, animals.
@@ -60,6 +60,8 @@ Debt backed securites.
 Collaborative networked play
 
 Plugins and user generated subsystems.
+
+Teach an old dog new tricks.
 
 ## Scenarios
 

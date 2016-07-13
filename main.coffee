@@ -23,6 +23,7 @@ state =
   world:
     width: 512
     height: 512
+  tiles: require("./tiledata")
   activeTool: "pan"
   tools: """
     pan
@@ -64,19 +65,8 @@ Promise.all [
   "Objects/Pit1"
 ].map Preload.image
 .then (sheets) ->
-  # Sheet index, sheetX, sheetY
-  tiles = [
-    [1, 1, 19]
-    [6, 1, 11]
-    [1, 8, 7, true]
-    [1, 15, 7, true]
-    [1, 15, 19, true]
-    [0, 3, 3]
-    [4, 0, 0]
-    [5, 0, 0]
-  ]
 
   characters = [0...8].map (x) ->
     [4, x, 0]
 
-  renderer = Renderer(sheets, tiles, characters)
+  renderer = Renderer(sheets, characters)

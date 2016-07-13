@@ -7,6 +7,7 @@ module.exports = (I={}, self=Model(I)) ->
 
   self.attrObservable "activeTool", "tools"
   self.attrAccessor "viewport"
+  self.attrAccessor "tiles"
 
   self.attrModel "world", World
 

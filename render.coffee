@@ -1,4 +1,4 @@
-module.exports = (sheets, tiles, characters) ->
+module.exports = (sheets, characters) ->
   S = 16 # Tile size
 
   autoTileDelta = [
@@ -58,11 +58,14 @@ module.exports = (sheets, tiles, characters) ->
 
     return
 
-  drawTile = (canvas, world, index, x, y) ->
+  drawTile = (canvas, world, tiles, index, t, x, y) ->
     return unless index?
 
-    [sheetIndex, tx, ty, autoTile] = tiles[index]
-    sheet = sheets[sheetIndex]
+    [sheetIndex, tx, ty, autoTile, altSheet] = tiles[index]
+    if altSheet? and t % 1000 < 500
+      sheet = sheets[altSheet]
+    else
+      sheet = sheets[sheetIndex]
 
     if autoTile
       [dtx, dty] = autoTileDelta[autoTileValue(world, index, x, y)]
@@ -76,6 +79,7 @@ module.exports = (sheets, tiles, characters) ->
   draw: (canvas, game) ->
     world = game.world()
     viewport = game.viewport()
+    tiles = game.tiles()
 
     t = +new Date
     canvas.fill('rgb(89, 125, 206)')
@@ -91,7 +95,7 @@ module.exports = (sheets, tiles, characters) ->
     canvas.withTransform transform, (canvas) ->
       # Draw Tiles
       world.region renderView, (value, x, y) ->
-        drawTile(canvas, world, value, x, y)
+        drawTile(canvas, world, tiles, value, t, x, y)
         return
 
       # Draw Objects
