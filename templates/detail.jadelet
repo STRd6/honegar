@@ -1,5 +1,6 @@
 - CharacterCard = require "./character-card"
+- CharacterPresenter = require "../presenters/character"
 
-.detail
+sidebar.detail
   - if character = @inspectedCharacter()
-    = CharacterCard character
+    = CharacterCard CharacterPresenter character, @detailCanvas

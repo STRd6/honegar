@@ -33,8 +33,13 @@ state =
 game = Game state
 global.game = game
 
-canvas = require("./canvas")(game)
+canvas = require("./canvas")(game, width: 512, height: 288)
 game.canvas = canvas.element()
+game.canvas.classList.add "primary"
+
+detailCanvas = require("./canvas")(game, width: 80, height: 80)
+game.detailCanvas = detailCanvas.element()
+game.detailCanvas.classList.add "detail"
 
 Template = require "./templates/main"
 document.body.appendChild Template game
@@ -43,7 +48,18 @@ update = ->
   game.update()
 
 draw = ->
-  renderer?.draw(canvas, game)
+  renderer?.draw(canvas, game, game.viewport())
+  
+  character = game.inspectedCharacter()
+  if character
+    {x, y} = character.position()
+    detailView = 
+      x: x - 2
+      y: y - 2
+      width: 5
+      height: 5
+
+    renderer?.draw(detailCanvas, game, detailView)
 
 step = ->
   update()

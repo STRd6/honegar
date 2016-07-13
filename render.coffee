@@ -107,9 +107,8 @@ module.exports = (sheets, characters) ->
       width: S
       height: S
 
-  draw: (canvas, game) ->
+  draw: (canvas, game, viewport) ->
     world = game.world()
-    viewport = game.viewport()
     tiles = game.tiles()
 
     t = +new Date

@@ -2,7 +2,9 @@ require("math").pollute()
 
 {defaults, extend} = require "util"
 
-global.defaults = defaults
+extend global,
+  defaults: defaults
+  extend: extend
 
 styleNode = document.createElement("style")
 styleNode.innerHTML = require "./style"

@@ -1,9 +1,9 @@
 TouchCanvas = require "touch-canvas"
 
-module.exports = (game) ->
+module.exports = (game, {width, height}) ->
   canvas = TouchCanvas
-    width: 512
-    height: 288
+    width: width
+    height: height
 
   canvas.on "touch", (e) ->
     Tools[game.activeTool()].touch(e, game)
