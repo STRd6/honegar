@@ -126,8 +126,8 @@ module.exports = (sheets, characters) ->
     canvas.withTransform transform, (canvas) ->
       # Draw Tiles
       world.region renderView, (value, x, y) ->
-        #drawTile(canvas, world, tiles, value, t, x, y)
-        drawValue(canvas, value, x, y)
+        drawTile(canvas, world, tiles, value, t, x, y)
+        #drawValue(canvas, value, x, y)
         return
 
       # Draw Objects

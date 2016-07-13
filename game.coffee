@@ -13,7 +13,7 @@ module.exports = (I={}, self=Model(I)) ->
 
   self.extend
     update: ->
-      if I.step % 10 is 0
+      if I.step % 20 is 0
         self.world().entities().forEach (entity) ->
           entity.move(self.world())
 

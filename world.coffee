@@ -12,7 +12,14 @@ module.exports = (I) ->
     height: height
 
   gaussian(grid)
-  console.log grid
+
+  grid.data.forEach (datum, i) ->
+    if datum < 110
+      grid.data[i] = 1
+    else if datum > 130
+      grid.data[i] = 0
+    else
+      grid.data[i] = 2
 
   entities = [0...8].map (x) ->
     Entity
@@ -29,4 +36,7 @@ module.exports = (I) ->
       entities
 
     passable: ({x, y}) ->
+      return false unless 0 <= x < width
+      return false unless 0 <= y < height
+
       !(self.getTile(x, y) % 2)
