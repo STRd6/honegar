@@ -1,5 +1,7 @@
 card
-  h2= @name
+  h2
+    = @name
+    span.zodiac= @zodiac
   label
     h3 Age
     span= @age

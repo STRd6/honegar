@@ -40,3 +40,8 @@ module.exports = (I) ->
       return false unless 0 <= y < height
 
       !(self.getTile(x, y) % 2)
+
+    entityAt: (position) ->
+      (entities.filter (entity) ->
+        entity.position().equal(position)
+      )[0]

@@ -12,3 +12,21 @@ module.exports = ->
 
   randomCity: ->
     rand(Cities)
+
+  zodiac: ->
+    rand zodiac
+
+zodiac = """
+♈
+♉
+♊
+♋
+♌
+♍
+♎
+♏
+♐
+♑
+♒
+♓
+""".split "\n"

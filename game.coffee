@@ -5,7 +5,7 @@ World = require "./world"
 module.exports = (I={}, self=Model(I)) ->
   I.step ?= 0
 
-  self.attrObservable "activeTool", "tools"
+  self.attrObservable "activeTool", "tools", "inspectedCharacter"
   self.attrAccessor "viewport"
   self.attrAccessor "tiles"
 

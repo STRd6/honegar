@@ -31,6 +31,7 @@ state =
   """.split("\n")
 
 game = Game state
+global.game = game
 
 canvas = require("./canvas")(game)
 game.canvas = canvas.element()

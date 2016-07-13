@@ -1,4 +1,5 @@
 - CharacterCard = require "./character-card"
 
 .detail
-  = CharacterCard {}
+  - if character = @inspectedCharacter()
+    = CharacterCard character

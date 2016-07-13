@@ -49,8 +49,13 @@ Tools =
       startPos = null
 
   inspect: SimpleTool (e, game) ->
-    console.log worldPosition(e, game.viewport())
+    p = worldPosition(e, game.viewport())
+
+    c = game.world().entityAt(p)
+
+    if c
+      game.inspectedCharacter c
 
 worldPosition = ({x, y}, viewport) ->
-  x: x * viewport.width
-  y: y * viewport.height
+    x: viewport.x + (x * viewport.width)|0
+    y: viewport.y + (y * viewport.height)|0

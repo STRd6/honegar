@@ -7,8 +7,9 @@ module.exports = (I={}, self=Model(I)) ->
     age: Math.floor Math.random()*30 + 11
     hometown: generator.randomCity()
     name: generator.generate()
+    zodiac: generator.zodiac()
 
-  self.attrObservable "index", "name"
+  self.attrObservable "age", "hometown", "index", "name", "zodiac"
   self.attrModel "position", Point
 
   self.extend
