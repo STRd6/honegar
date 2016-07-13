@@ -2,6 +2,8 @@ ByteGrid = require "./lib/byte-grid"
 
 Entity = require "./entity"
 
+{gaussian} = require("./terrain/generate")
+
 module.exports = (I) ->
   {width, height} = I
 
@@ -9,9 +11,8 @@ module.exports = (I) ->
     width: width
     height: height
 
-  [0...128].forEach (y) ->
-    [0...128].forEach (x) ->
-      grid.set(x, y, rand(3))
+  gaussian(grid)
+  console.log grid
 
   entities = [0...8].map (x) ->
     Entity
@@ -28,4 +29,4 @@ module.exports = (I) ->
       entities
 
     passable: ({x, y}) ->
-      self.getTile(x, y) != 1
+      !(self.getTile(x, y) % 2)

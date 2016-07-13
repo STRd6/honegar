@@ -1,23 +1,44 @@
 module.exports = (sheets, characters) ->
   S = 16 # Tile size
 
-  autoTileDelta = [
-    [4, -1]
-    [2, 1]
-    [3, 0]
-    [-1, 1]
-    [2, -1]
-    [2, 0]
-    [-1, -1]
-    [-1, 0]
-    [5, 0] # 8
-    [1, 1]
-    [4, 0]
-    [0, 1]
-    [1, -1]
-    [1, 0]
-    [0, -1]
-    [0, 0]
+  autoTileDeltas = [
+    []
+    [
+      [4, -1]
+      [2, 1]
+      [3, 0]
+      [-1, 1]
+      [2, -1]
+      [2, 0]
+      [-1, -1]
+      [-1, 0]
+      [5, 0] # 8
+      [1, 1]
+      [4, 0]
+      [0, 1]
+      [1, -1]
+      [1, 0]
+      [0, -1]
+      [0, 0]
+    ]
+    [ # This is for water tiles but it is all jacked up :P
+      [3, 0]
+      [3, 0] # 1
+      [-1, -1] # 2
+      [-1, 0]
+      [3, -1]
+      [-1, -1]
+      [-1, -1]
+      [-1, 0]
+      [6, -1] # 8
+      [1, 0]
+      [0, -1]
+      [0, 0]
+      [1, -1]
+      [1, 0]
+      [0, -1]
+      [0, 0]
+    ]
   ]
 
   adjacents = [
@@ -68,13 +89,23 @@ module.exports = (sheets, characters) ->
       sheet = sheets[sheetIndex]
 
     if autoTile
-      [dtx, dty] = autoTileDelta[autoTileValue(world, index, x, y)]
+      [dtx, dty] = autoTileDeltas[autoTile][autoTileValue(world, index, x, y)]
       tx += dtx
       ty += dty
 
     drawSprite(canvas, sheet, tx, ty, x, y)
 
     return
+
+  drawValue = (canvas, value, x, y) ->
+    return unless value?
+
+    canvas.drawRect
+      color: "rgb(#{value}, 128, #{value})"
+      x: x * S
+      y: y * S
+      width: S
+      height: S
 
   draw: (canvas, game) ->
     world = game.world()
@@ -95,7 +126,8 @@ module.exports = (sheets, characters) ->
     canvas.withTransform transform, (canvas) ->
       # Draw Tiles
       world.region renderView, (value, x, y) ->
-        drawTile(canvas, world, tiles, value, t, x, y)
+        #drawTile(canvas, world, tiles, value, t, x, y)
+        drawValue(canvas, value, x, y)
         return
 
       # Draw Objects

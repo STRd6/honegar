@@ -4,6 +4,8 @@ module.exports = ({width, height, data}) ->
   data ?= new Uint8Array(length)
 
   self =
+    width: width
+    height: height
     region: (rect, iterator) ->
       xStart = rect.x
       yStart = rect.y
