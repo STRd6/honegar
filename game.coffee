@@ -14,7 +14,7 @@ module.exports = (I={}, self=Model(I)) ->
     update: ->
       if I.step % 10 is 0
         self.world().entities().forEach (entity) ->
-          entity.move()
+          entity.move(self.world())
 
       I.step += 1
 

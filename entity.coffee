@@ -12,10 +12,13 @@ module.exports = (I={}, self=Model(I)) ->
   self.attrModel "position", Point
 
   self.extend
-    move: ->
+    move: (world) ->
       position = self.position()
       delta = Point rand(3)-1, rand(3)-1
 
-      self.position(position.add(delta))
+      newPosition = position.add(delta)
+
+      if world.passable(newPosition)
+        self.position(newPosition)
 
   return self

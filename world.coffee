@@ -26,3 +26,6 @@ module.exports = (I) ->
 
     entities: ->
       entities
+
+    passable: ({x, y}) ->
+      self.getTile(x, y) != 1
