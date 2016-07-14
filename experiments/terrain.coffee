@@ -14,11 +14,9 @@ view =
   width: 32
   height: 18
 
-state =
+game = Game
   viewport: view
   activeTool: "pan"
-
-game = Game state
 
 grid = ByteGrid
   width: 32
@@ -30,7 +28,10 @@ canvas.element().classList.add "primary"
 document.body.appendChild(canvas.element())
 
 drawValue = (canvas, size, value, x, y) ->
+  # i = state.i % grid.data.length
+  # if grid.height * y + x < i
   value = grid2.get(x, y)
+
   return unless value?
 
   canvas.drawRect
@@ -93,14 +94,21 @@ gaussian2 = (source, destination, state) ->
     doStepY(state)
   else
     state.i = state.x = state.y = 0
+    state.swap = ByteGrid
+      width: width
+      height: height
+    return true
 
-  return grid
+  return false
 
 noise(grid)
 
 grid2 = ByteGrid
   width: grid.width
   height: grid.height
+
+grid2.data.forEach (v, i) ->
+  grid2.data[i] = grid.data[i]
 
 n = 1
 state =
@@ -110,8 +118,10 @@ state =
 step = ->
   draw()
 
-  gaussian2(grid, grid2, state)
-  gaussian2(grid, grid2, state)
+  [0...3].forEach ->
+    if gaussian2(grid, grid2, state)
+      grid.data.forEach (v, i) ->
+        grid.data[i] = grid2.data[i]
   n += 1
 
   requestAnimationFrame step
