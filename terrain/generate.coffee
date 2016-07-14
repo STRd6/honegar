@@ -34,7 +34,7 @@ gaussian = (grid) ->
     # Copy into a new buffer
     swap.data[i] = v
     i++
-  
+
   i = 0
   x = 0
   while i < length

@@ -49,11 +49,11 @@ update = ->
 
 draw = ->
   renderer?.draw(canvas, game, game.viewport())
-  
+
   character = game.inspectedCharacter()
   if character
     {x, y} = character.position()
-    detailView = 
+    detailView =
       x: x - 2
       y: y - 2
       width: 5
