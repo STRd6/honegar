@@ -1,5 +1,6 @@
 width: 1536
 height: 864
+#entryPoint: "experiments/terrain"
 dependencies:
   ajax: "distri/ajax:master"
   math: "distri/math:master"

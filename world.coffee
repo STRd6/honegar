@@ -2,15 +2,20 @@ ByteGrid = require "./lib/byte-grid"
 
 Entity = require "./entity"
 
-{gaussian} = require("./terrain/generate")
+{noise, gaussian} = require("./terrain/generate")
 
-module.exports = (I) ->
+module.exports = (I={}) ->
+  defaults I,
+    width: 64
+    height: 64
+
   {width, height} = I
 
   grid = ByteGrid
     width: width
     height: height
 
+  noise(grid)
   gaussian(grid)
 
   grid.data.forEach (datum, i) ->

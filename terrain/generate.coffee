@@ -12,12 +12,10 @@ noiseFill = (buffer) ->
 
   return buffer
 
-# Fill the grid with noise then smooth using a blur filter
+# Fill blur using a gaussian blur filter
 gaussian = (grid) ->
   {data, width, height} = grid
   length = data.length
-
-  noiseFill(grid.data)
 
   swap = ByteGrid
     width: width
@@ -54,7 +52,6 @@ gaussian = (grid) ->
 
 cellular = (grid) ->
 
-
 diamondSquare = (grid) -> # TODO
   {width, height} = grid
 
@@ -69,7 +66,8 @@ diamondSquare = (grid) -> # TODO
 
   # Square
   grid.set(stride/2, 0, )
-  
+
 module.exports =
   gaussian: gaussian
-    
+  noise: (grid) ->
+    noiseFill(grid.data)

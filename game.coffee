@@ -3,7 +3,9 @@ Model = require "model"
 World = require "./world"
 
 module.exports = (I={}, self=Model(I)) ->
-  I.step ?= 0
+  defaults I,
+    step: 0
+    activeTool: "pan"
 
   self.attrObservable "activeTool", "tools", "inspectedCharacter"
   self.attrAccessor "viewport"
