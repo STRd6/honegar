@@ -18,13 +18,15 @@ module.exports = (I={}) ->
   noise(grid)
   gaussian(grid)
 
+  plainChoice = [0, 2]
+
   grid.data.forEach (datum, i) ->
     if datum < 110
       grid.data[i] = 1
-    else if datum > 130
-      grid.data[i] = 0
+    else if datum > 150
+      grid.data[i] = 7
     else
-      grid.data[i] = 2
+      grid.data[i] = plainChoice[rand(2)]
 
   entities = [0...8].map (x) ->
     Entity
