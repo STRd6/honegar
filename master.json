@@ -152,7 +152,7 @@
     },
     "tiledata.coffee": {
       "path": "tiledata.coffee",
-      "content": "# Sheet index, sheetX, sheetY, autotileMode, altsheet\nmodule.exports = [\n  [1, 1, 19] # dirt\n  [6, 1, 11, 0, 7] # water\n  [1, 8, 7, 1] # grass\n  [6, 1, 27, 0, 7] # lava\n  [1, 15, 7, 1]\n  [1, 15, 19, 1]\n  [0, 3, 3]\n  [4, 0, 0]\n  [5, 0, 0]\n]\n",
+      "content": "# Sheet index, sheetX, sheetY, autotileMode, altsheet\nmodule.exports = [\n  [1, 1, 19] # dirt\n  [6, 1, 11, 0, 7] # water\n  [1, 8, 7, 1] # grass\n  [6, 1, 27, 0, 7] # lava\n  [1, 15, 7, 1]\n  [0, 3, 3] # wall\n  [1, 15, 19, 1]\n  [0, 10, 15] # mountain\n  [4, 0, 0]\n  [5, 0, 0]\n]\n",
       "mode": "100644",
       "type": "blob"
     },
@@ -164,7 +164,7 @@
     },
     "world.coffee": {
       "path": "world.coffee",
-      "content": "ByteGrid = require \"./lib/byte-grid\"\n\nEntity = require \"./entity\"\n\n{noise, gaussian} = require(\"./terrain/generate\")\n\nmodule.exports = (I={}) ->\n  defaults I,\n    width: 64\n    height: 64\n\n  {width, height} = I\n\n  grid = ByteGrid\n    width: width\n    height: height\n\n  noise(grid)\n  gaussian(grid)\n\n  grid.data.forEach (datum, i) ->\n    if datum < 110\n      grid.data[i] = 1\n    else if datum > 130\n      grid.data[i] = 0\n    else\n      grid.data[i] = 2\n\n  entities = [0...8].map (x) ->\n    Entity\n      index: x\n      position:\n        x: 16 + x % 5\n        y: 13 + x % 3\n\n  self =\n    getTile: grid.get\n    region: grid.region\n\n    entities: ->\n      entities\n\n    passable: ({x, y}) ->\n      return false unless 0 <= x < width\n      return false unless 0 <= y < height\n\n      !(self.getTile(x, y) % 2)\n\n    entityAt: (position) ->\n      (entities.filter (entity) ->\n        entity.position().equal(position)\n      )[0]\n",
+      "content": "ByteGrid = require \"./lib/byte-grid\"\n\nEntity = require \"./entity\"\n\n{noise, gaussian} = require(\"./terrain/generate\")\n\nmodule.exports = (I={}) ->\n  defaults I,\n    width: 64\n    height: 64\n\n  {width, height} = I\n\n  grid = ByteGrid\n    width: width\n    height: height\n\n  noise(grid)\n  gaussian(grid)\n\n  plainChoice = [0, 2]\n\n  grid.data.forEach (datum, i) ->\n    if datum < 110\n      grid.data[i] = 1\n    else if datum > 150\n      grid.data[i] = 7\n    else\n      grid.data[i] = plainChoice[rand(2)]\n\n  entities = [0...8].map (x) ->\n    Entity\n      index: x\n      position:\n        x: 16 + x % 5\n        y: 13 + x % 3\n\n  self =\n    getTile: grid.get\n    region: grid.region\n\n    entities: ->\n      entities\n\n    passable: ({x, y}) ->\n      return false unless 0 <= x < width\n      return false unless 0 <= y < height\n\n      !(self.getTile(x, y) % 2)\n\n    entityAt: (position) ->\n      (entities.filter (entity) ->\n        entity.position().equal(position)\n      )[0]\n",
       "mode": "100644",
       "type": "blob"
     }
@@ -287,7 +287,7 @@
     },
     "tiledata": {
       "path": "tiledata",
-      "content": "(function() {\n  module.exports = [[1, 1, 19], [6, 1, 11, 0, 7], [1, 8, 7, 1], [6, 1, 27, 0, 7], [1, 15, 7, 1], [1, 15, 19, 1], [0, 3, 3], [4, 0, 0], [5, 0, 0]];\n\n}).call(this);\n",
+      "content": "(function() {\n  module.exports = [[1, 1, 19], [6, 1, 11, 0, 7], [1, 8, 7, 1], [6, 1, 27, 0, 7], [1, 15, 7, 1], [0, 3, 3], [1, 15, 19, 1], [0, 10, 15], [4, 0, 0], [5, 0, 0]];\n\n}).call(this);\n",
       "type": "blob"
     },
     "visualizer/grid-renderer": {
@@ -297,7 +297,7 @@
     },
     "world": {
       "path": "world",
-      "content": "(function() {\n  var ByteGrid, Entity, gaussian, noise, _ref;\n\n  ByteGrid = require(\"./lib/byte-grid\");\n\n  Entity = require(\"./entity\");\n\n  _ref = require(\"./terrain/generate\"), noise = _ref.noise, gaussian = _ref.gaussian;\n\n  module.exports = function(I) {\n    var entities, grid, height, self, width;\n    if (I == null) {\n      I = {};\n    }\n    defaults(I, {\n      width: 64,\n      height: 64\n    });\n    width = I.width, height = I.height;\n    grid = ByteGrid({\n      width: width,\n      height: height\n    });\n    noise(grid);\n    gaussian(grid);\n    grid.data.forEach(function(datum, i) {\n      if (datum < 110) {\n        return grid.data[i] = 1;\n      } else if (datum > 130) {\n        return grid.data[i] = 0;\n      } else {\n        return grid.data[i] = 2;\n      }\n    });\n    entities = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return Entity({\n        index: x,\n        position: {\n          x: 16 + x % 5,\n          y: 13 + x % 3\n        }\n      });\n    });\n    return self = {\n      getTile: grid.get,\n      region: grid.region,\n      entities: function() {\n        return entities;\n      },\n      passable: function(_arg) {\n        var x, y;\n        x = _arg.x, y = _arg.y;\n        if (!((0 <= x && x < width))) {\n          return false;\n        }\n        if (!((0 <= y && y < height))) {\n          return false;\n        }\n        return !(self.getTile(x, y) % 2);\n      },\n      entityAt: function(position) {\n        return (entities.filter(function(entity) {\n          return entity.position().equal(position);\n        }))[0];\n      }\n    };\n  };\n\n}).call(this);\n",
+      "content": "(function() {\n  var ByteGrid, Entity, gaussian, noise, _ref;\n\n  ByteGrid = require(\"./lib/byte-grid\");\n\n  Entity = require(\"./entity\");\n\n  _ref = require(\"./terrain/generate\"), noise = _ref.noise, gaussian = _ref.gaussian;\n\n  module.exports = function(I) {\n    var entities, grid, height, plainChoice, self, width;\n    if (I == null) {\n      I = {};\n    }\n    defaults(I, {\n      width: 64,\n      height: 64\n    });\n    width = I.width, height = I.height;\n    grid = ByteGrid({\n      width: width,\n      height: height\n    });\n    noise(grid);\n    gaussian(grid);\n    plainChoice = [0, 2];\n    grid.data.forEach(function(datum, i) {\n      if (datum < 110) {\n        return grid.data[i] = 1;\n      } else if (datum > 150) {\n        return grid.data[i] = 7;\n      } else {\n        return grid.data[i] = plainChoice[rand(2)];\n      }\n    });\n    entities = [0, 1, 2, 3, 4, 5, 6, 7].map(function(x) {\n      return Entity({\n        index: x,\n        position: {\n          x: 16 + x % 5,\n          y: 13 + x % 3\n        }\n      });\n    });\n    return self = {\n      getTile: grid.get,\n      region: grid.region,\n      entities: function() {\n        return entities;\n      },\n      passable: function(_arg) {\n        var x, y;\n        x = _arg.x, y = _arg.y;\n        if (!((0 <= x && x < width))) {\n          return false;\n        }\n        if (!((0 <= y && y < height))) {\n          return false;\n        }\n        return !(self.getTile(x, y) % 2);\n      },\n      entityAt: function(position) {\n        return (entities.filter(function(entity) {\n          return entity.position().equal(position);\n        }))[0];\n      }\n    };\n  };\n\n}).call(this);\n",
       "type": "blob"
     },
     "lib/hamlet-runtime": {
