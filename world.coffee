@@ -4,7 +4,7 @@ Entity = require "./entity"
 
 {noise, gaussian} = require("./terrain/generate")
 
-histogram = require "./util/histogram"
+{histogram, spark} = require "./util/histogram"
 
 module.exports = (I={}) ->
   defaults I,
@@ -19,11 +19,11 @@ module.exports = (I={}) ->
 
   noise(grid)
 
-  histogram grid.data.slice(0, 512)
+  spark histogram grid.data.slice(0, 512)
 
   gaussian(grid)
   
-  histogram grid.data.slice(0, 512)
+  spark histogram grid.data.slice(0, 512)
 
   plainChoice = [0, 2]
 

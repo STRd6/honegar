@@ -1,19 +1,28 @@
-module.exports = (data) ->
-  range = 256
-  bars = " ▁▂▃▄▅▆▇█".split("")
+module.exports = 
+  histogram: (data, opts={}) ->
+    {min, max, bins} = opts
+    min ?= 0
+    max ?= 256
+    bins ?= 16
 
-  counts = [0...16].map -> 
-    0
+    range = max - min
+    counts = [0...bins].map ->
+      0
 
-  data.forEach (datum) ->
-    n = Math.floor datum / range * counts.length
-    counts[n]++
+    data.forEach (datum) ->
+      n = Math.floor datum / range * counts.length
+      counts[n]++
 
-  {min, max} = counts.extremes()
-  countRange = max - min + 1
-  graph = counts.map (count) ->
-    n = Math.floor (count - min) / countRange * bars.length
-    bars[n]
-  .join("")
+    counts
 
-  console.log "0 #{graph} 255"
+  spark:(data) ->
+    bars = " ▁▂▃▄▅▆▇█".split("")
+
+    {min, max} = data.extremes()
+    countRange = max - min + 1
+    graph = data.map (value) ->
+      n = Math.floor (value - min) / countRange * bars.length
+      bars[n]
+    .join("")
+
+    console.log "0 #{graph} 255"
