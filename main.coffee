@@ -21,8 +21,8 @@ view =
 state =
   viewport: view
   world:
-    width: 64
-    height: 64
+    width: 128
+    height: 128
   tiles: require("./tiledata")
   activeTool: "pan"
   tools: """

@@ -29,10 +29,11 @@ gaussian = (grid) ->
     v = gaussianKernel.reduce (total, ratio, index) ->
       (grid.get(index - 3 + x, y) ? 128) * ratio + total
     , 0
-    if x is width - 1
-      y++
     # Copy into a new buffer
     swap.data[i] = v
+
+    if x is width - 1
+      y++
     i++
 
   i = 0
@@ -42,10 +43,11 @@ gaussian = (grid) ->
     v = gaussianKernel.reduce (total, ratio, index) ->
       (swap.get(x, index - 3 + y) ? 128) * ratio + total
     , 0
-    if y is height - 1
-      x++
     # Copy back to orig
     data[i] = v
+
+    if y is height - 1
+      x++
     i++
 
   return grid
