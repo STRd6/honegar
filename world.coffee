@@ -4,6 +4,8 @@ Entity = require "./entity"
 
 {noise, gaussian} = require("./terrain/generate")
 
+histogram = require "./util/histogram"
+
 module.exports = (I={}) ->
   defaults I,
     width: 64
@@ -16,7 +18,12 @@ module.exports = (I={}) ->
     height: height
 
   noise(grid)
+
+  histogram grid.data.slice(0, 512)
+
   gaussian(grid)
+  
+  histogram grid.data.slice(0, 512)
 
   plainChoice = [0, 2]
 

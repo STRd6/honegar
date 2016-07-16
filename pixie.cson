@@ -3,6 +3,7 @@ height: 864
 # entryPoint: "experiments/terrain"
 dependencies:
   ajax: "distri/ajax:master"
+  extensions: "distri/extensions:master" 
   math: "distri/math:master"
   model: "distri/model:master"
   "touch-canvas": "distri/touch-canvas:v0.3.1"

@@ -1,4 +1,5 @@
 require("math").pollute()
+require("extensions")
 
 {defaults, extend} = require "util"
 
