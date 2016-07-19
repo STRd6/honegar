@@ -1,4 +1,4 @@
-module.exports = 
+module.exports =
   histogram: (data, opts={}) ->
     {min, max, bins} = opts
     min ?= 0

@@ -8,6 +8,9 @@ card
   label
     h3 Hometown
     span= @hometown
+  label
+    h3 Favorite Food
+    span= @favoriteFood
 
   view
     = @detailCanvas
