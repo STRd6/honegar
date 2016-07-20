@@ -135,5 +135,12 @@ module.exports = (sheets, characters) ->
       world.entities().forEach (entity) ->
         index = entity.index()
         {x, y} = entity.position()
+        food = entity.favoriteFood()
 
         drawCharacter canvas, index, t, x, y
+
+        # TODO: This looks cray cray on the scaled canvas
+        canvas.drawText 
+          text: food
+          x: x * 16
+          y: y * 16
