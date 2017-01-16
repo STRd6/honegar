@@ -22,7 +22,7 @@ module.exports = (I={}) ->
   spark histogram grid.data.slice(0, 512)
 
   gaussian(grid)
-  
+
   spark histogram grid.data.slice(0, 512)
 
   plainChoice = [0, 2]
