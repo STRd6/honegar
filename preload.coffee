@@ -1,7 +1,8 @@
 Ajax = require "ajax"
 ajax = Ajax()
 
-basePath = "https://danielx.whimsy.space/DawnLike/"
+# basePath = "https://danielx.whimsy.space/DawnLike/"
+basePath = "https://s3.amazonaws.com/whimsyspace-databucket-1g3p6d9lcl6x1/danielx/DawnLike/"
 
 module.exports =
   image: (name) ->
